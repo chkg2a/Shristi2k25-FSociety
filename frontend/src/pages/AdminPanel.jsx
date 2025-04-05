@@ -439,19 +439,19 @@ const AdminPanel = () => {
                                       {getInitials(user.user)}
                                     </div>
                                     <div className="ml-4">
-                                      <div className="text-sm font-medium text-gray-900">
+                                      <div className="text-md font-medium text-gray-900">
                                         {user.user}
                                       </div>
-                                      <div className="text-sm text-gray-500">
+                                      <div className="text-md text-gray-500 font-bold">
                                         {user.email}
                                       </div>
                                     </div>
                                   </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td className="px-6 py-4 whitespace-nowrap text-md font-semibold text-blue-500">
                                   {user.credits}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td className="px-6 py-4 whitespace-nowrap text-md font-semibold text-red-500">
                                   {user.totalScans}
                                 </td>
                               </tr>
