@@ -91,6 +91,28 @@ export const login=async(req,res)=>{
         })
     }
 }
+export const logout = async (req, res) => {
+    try {
+        res.cookie("jwt", "", {
+            httpOnly: true,
+            expires: new Date(0),
+            secure: process.env.NODE_ENV === "production", // ensures cookie is only sent over HTTPS in production
+            sameSite: "strict",
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "User logged out successfully",
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong while logging out",
+        });
+    }
+};
+
 
 
     

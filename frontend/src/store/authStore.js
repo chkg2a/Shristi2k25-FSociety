@@ -8,7 +8,6 @@ const useAuthStore = create((set) => ({
   isLoading: false,
   isAuthenticated: false,
   isCheckingAuth: false,
-
   login: async (email, password) => {
     set({ isLoading: true });
     try {
@@ -70,7 +69,7 @@ const useAuthStore = create((set) => ({
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
       return res.data;
     } catch (error) {
@@ -89,7 +88,7 @@ const useAuthStore = create((set) => ({
         {
           requestedCredits,
           reason,
-        }
+        },
       );
       console.log(res);
     } catch (error) {
@@ -103,7 +102,7 @@ const useAuthStore = create((set) => ({
     set({ isLoading: true });
     try {
       const res = await axios.get(
-        "http://localhost:3000/api/v1/credit/admin/pending"
+        "http://localhost:3000/api/v1/credit/admin/pending",
       );
       console.log(res);
       return res;
@@ -118,7 +117,9 @@ const useAuthStore = create((set) => ({
   fetchUser: async (id) => {
     set({ isLoading: true });
     try {
-      const res = await axios.post("http://localhost:3000/api/v1/user/", { id });
+      const res = await axios.post("http://localhost:3000/api/v1/user/", {
+        id,
+      });
       console.log("Fetched user:", res.data);
       set({ user: res.data });
       return res.data;
@@ -133,10 +134,13 @@ const useAuthStore = create((set) => ({
   matchDocument: async (sourceDocumentId, targetDocumentIds) => {
     set({ isLoading: true });
     try {
-      const res = await axios.post("http://localhost:3000/api/v1/document/match", {
-        sourceDocumentId,
-        targetDocumentIds,
-      });
+      const res = await axios.post(
+        "http://localhost:3000/api/v1/document/match",
+        {
+          sourceDocumentId,
+          targetDocumentIds,
+        },
+      );
       console.log(res);
       return res;
     } catch (error) {
@@ -150,7 +154,9 @@ const useAuthStore = create((set) => ({
   getAnalytics: async () => {
     set({ isLoading: true });
     try {
-      const res = await axios.get("http://localhost:3000/api/v1/admin/analytics");
+      const res = await axios.get(
+        "http://localhost:3000/api/v1/admin/analytics",
+      );
       return res;
     } catch (error) {
       return error;
@@ -162,10 +168,13 @@ const useAuthStore = create((set) => ({
   approveCredict: async (requestId, status) => {
     set({ isLoading: true });
     try {
-      const res = await axios.post("http://localhost:3000/api/v1/credit/admin/process", {
-        requestId,
-        status,
-      });
+      const res = await axios.post(
+        "http://localhost:3000/api/v1/credit/admin/process",
+        {
+          requestId,
+          status,
+        },
+      );
       console.log(res);
     } catch (error) {
       console.log(error);
@@ -173,6 +182,26 @@ const useAuthStore = create((set) => ({
     } finally {
       set({ isLoading: false });
     }
+  },
+  approveCredict: async (requestId, status) => {
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/v1/credit/admin/process",
+        {
+          requestId,
+          status,
+        },
+      );
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  },
+  logout: async () => {
+    try {
+      const res = await axios.post("http://localhost:3000/api/v1/auth/logout");
+    } catch (error) {}
   },
 }));
 
