@@ -574,7 +574,7 @@ const handleCreditAction = async (requestId, action) => {
                         <tr key={request._id}>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
-                              <div className="flex-shrink-0 h-10 w-10">PK</div>
+                              <div className="flex-shrink-0 h-10 w-10">{getInitials(request.userId?.name)}</div>
                               <div className="ml-4">
                                 <div className="text-sm font-medium text-gray-900">
                                   {request.userId?.name || "User"}
@@ -586,13 +586,13 @@ const handleCreditAction = async (requestId, action) => {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {new Date(request.createdAt).toLocaleDateString()}
+                            {new Date(request.requestDate).toLocaleDateString()}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            ${request.amount}
+                            {request.requestedCredits}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {request.description || "No description"}
+                            {request.reason || "No description"}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             <button
