@@ -89,7 +89,7 @@ const DocumentUpload = () => {
   return (
     <>
       <Navbar />
-      <div className="flex flex-col items-center mx-auto bg-[#f9fafb] pt-8">
+      <div className="h-screen flex flex-col items-center mx-auto bg-[#f9fafb] pt-8">
         <div className="w-full max-w-4xl">
           {/* Upload Section */}
           <div className="bg-white w-full rounded-lg shadow-md p-8 mb-6">

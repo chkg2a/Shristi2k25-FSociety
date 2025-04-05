@@ -6,7 +6,7 @@ const PricingSection = () => {
   const { isAuthenticated } = useAuthStore();
 
   return (
-    <section className="py-16 px-4 bg-gray-50">
+    <section id="pricing" className="py-16 px-4 bg-gray-50">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl font-semibold text-center mb-12">
           Simple Pricing
