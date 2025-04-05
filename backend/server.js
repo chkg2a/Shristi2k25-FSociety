@@ -4,6 +4,10 @@ import dotenv from "dotenv";
 import authRoute from "./route/auth.route.js";
 import Check from "./route/check.route.js";
 import cookieParser from "cookie-parser";
+import routerAdmin from "./route/admin.route.js";
+import routerCredit from "./route/credict.route.js";
+import routerDocument from "./route/document.route.js";
+import routerMatch from "./route/matching.route.js";
 import cors from "cors";
 dotenv.config();
 
@@ -19,6 +23,10 @@ app.use(cors({
 }));
 app.use("/api/v1/auth",authRoute);
 app.use("/api/v1/verify",Check);
+app.use("/api/v1/admin",routerAdmin);
+app.use("/api/v1/credit",routerCredit);
+app.use("/api/v1/document",routerDocument);
+app.use("/api/v1/match",routerMatch);
 
 app.listen(PORT,async()=>{
     await connectDb();

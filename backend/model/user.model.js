@@ -14,6 +14,21 @@ const userSchema=new mongoose.Schema({
     password:{
         type:String,
         required:true
+    },
+    credits:{
+        type:Number,
+        default:0
+    },
+    role:{
+        type:String,
+        default:"user"
+    },
+    lastCreditReset:{
+        type: Date, default: Date.now()
+    },
+    totalScans:{
+        type:Number,
+        default:0
     }
 });
 

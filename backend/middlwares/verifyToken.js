@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import User from "../model/user.model.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -15,6 +16,22 @@ export const verifyToken = async (req, res, next) => {
 
     if (!decoded.userId) {
       return res.status(401).json({ message: "Unauthorized: Invalid token payload" });
+    }
+
+    const user = await User.findById(decoded.userId);
+
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized: User not found" });
+    }
+    const currentDate = new Date();
+    const lastReset = new Date(user.lastCreditReset);
+    
+    if (currentDate.getDate() !== lastReset.getDate() || 
+        currentDate.getMonth() !== lastReset.getMonth() ||
+        currentDate.getFullYear() !== lastReset.getFullYear()) {
+      user.credits = 20; 
+      user.lastCreditReset = currentDate;
+      await user.save();
     }
 
     req.userId = decoded.userId;
