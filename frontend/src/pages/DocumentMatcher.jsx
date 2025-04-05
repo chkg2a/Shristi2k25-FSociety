@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Cloud, FileText, Upload, Scale } from "lucide-react"; // 🔁 Changed Compare to Scale
 import axios from "axios";
 import Navbar from "../components/NavBar";
+import CreditSection from "../components/CreditSection";
+import useAuthStore from "../store/authStore";
 
 const DocumentUploader = () => {
   const [documents, setDocuments] = useState([]);
@@ -139,8 +141,8 @@ const DocumentUploader = () => {
   return (
     <>
       <Navbar />
-      <div className="flex flex-col items-center mx-auto bg-[#f9fafb] pt-8">
-        <div className="w-full max-w-4xl">
+      <div className="h-screen flex justify-center mx-auto bg-[#f9fafb] pt-8 gap-8">
+        <div className="w-full max-w-2xl">
           {/* Upload Section */}
           <div className="bg-white w-full rounded-lg shadow-md p-8 mb-6">
             <div className="flex flex-col items-center text-center">
@@ -274,6 +276,9 @@ const DocumentUploader = () => {
               )}
             </div>
           )}
+        </div>
+        <div>
+          <CreditSection user={user} />
         </div>
       </div>
     </>

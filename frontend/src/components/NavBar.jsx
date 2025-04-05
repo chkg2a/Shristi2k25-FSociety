@@ -46,8 +46,6 @@ const Navbar = () => {
                 <li><Link to="/document-upload" className="text-gray-600 hover:text-blue-500">Upload Document</Link></li>
                 <li><Link to="/document-matching" className="text-gray-600 hover:text-blue-500">Document Matcher</Link></li>
                 <li><Link to="/dashboard" className="text-gray-600 hover:text-blue-500">Dashboard</Link></li>
-                <li><Link to="/admin-dashboard" className="text-gray-600 hover:text-blue-500">Admin Dashboard</Link></li>
-                <li><Link to="/buy-credits" className="text-gray-600 hover:text-blue-500">Buy Credits</Link></li>
               </>
             )}
           </ul>
@@ -56,7 +54,7 @@ const Navbar = () => {
         {/* Auth */}
         <div className="hidden md:flex items-center">
           {isAuthenticated ? (
-            <Link to="/profile">
+            <Link to="/dashboard">
               <div className="w-[48px] h-[48px] overflow-hidden">
                 <div className="flex items-center justify-center w-full h-full rounded-full p-2 bg-gray-200">
                   <p>{getInitials(user.name)}</p>
@@ -102,8 +100,6 @@ const Navbar = () => {
                   <li className="py-2"><Link to="/upload" className="text-gray-600 hover:text-blue-500">Upload Document</Link></li>
                   <li className="py-2"><Link to="/document-matching" className="text-gray-600 hover:text-blue-500">Document Matcher</Link></li>
                   <li className="py-2"><Link to="/dashboard" className="text-gray-600 hover:text-blue-500">Dashboard</Link></li>
-                  <li className="py-2"><Link to="/admin" className="text-gray-600 hover:text-blue-500">Admin Dashboard</Link></li>
-                  <li className="py-2"><Link to="/buy-credits" className="text-gray-600 hover:text-blue-500">Buy Credits</Link></li>
                 </>
               )}
               {!isAuthenticated && (

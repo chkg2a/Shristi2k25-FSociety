@@ -26,7 +26,6 @@ function App() {
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/dashboard" element={<AdminPanel />} />
-          <Route path="/admin-dashboard" element={<AdminPanel />} />
           <Route path="/request-credits" element={<RequestCredit />} />
         </Routes>
       </BrowserRouter>

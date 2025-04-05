@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
   Users,
   File,
@@ -15,14 +16,14 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import ReportsSection from "../components/ReportsSection";
-import useAuthStore from "../store/authStore.js"
+import useAuthStore from "../store/authStore.js";
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [pendingRequests, setPendingRequests] = useState([]);
-  const { user } = useAuthStore()
+  const { user } = useAuthStore();
 
   // Mock data - in a real app, this would come from API calls
   const stats = {
@@ -78,13 +79,19 @@ const AdminPanel = () => {
   ];
 
   // Sidebar navigation options
-  const sidebarOptions = [
-    { id: "dashboard", label: "Dashboard", icon: BarChart },
-    { id: "users", label: "Manage Users", icon: Users },
-    { id: "credits", label: "Credit Requests", icon: CreditCard },
-    { id: "reports", label: "View Reports", icon: BarChart },
-    { id: "settings", label: "Settings", icon: Settings },
-  ];
+  const sidebarOptions =
+    user.role == "admin"
+      ? [
+          { id: "dashboard", label: "Dashboard", icon: BarChart },
+          { id: "users", label: "Manage Users", icon: Users },
+          { id: "credits", label: "Credit Requests", icon: CreditCard },
+          { id: "reports", label: "View Reports", icon: BarChart },
+          { id: "settings", label: "Settings", icon: Settings },
+        ]
+      : [
+          { id: "dashboard", label: "Dashboard", icon: BarChart },
+          { id: "settings", label: "Settings", icon: Settings },
+        ];
 
   // Function to get all pending credit requests
   const getAllPendingRequests = async () => {
@@ -129,13 +136,18 @@ const AdminPanel = () => {
     const nameParts = fullName.trim().split(" ");
     return nameParts.map((part) => part[0]?.toUpperCase() || "").join("");
   };
+  console.log(user);
 
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
       <div className="w-64 bg-white shadow-md">
         <div className="p-4 border-b border-gray-200">
-          <h1 className="text-xl font-bold text-blue-600">DocScanner Admin</h1>
+          <Link to="/">
+            <h1 className="text-xl font-bold text-blue-600">
+              DocScanner {user.role == "admin" ? "Admin" : ""}
+            </h1>
+          </Link>
         </div>
 
         <div className="p-4 border-b border-gray-200">
@@ -232,113 +244,119 @@ const AdminPanel = () => {
                 </div>
               </div>
 
-              {/* Recent Activity */}
-              <div className="bg-white rounded-lg shadow mb-6">
-                <div className="p-4 border-b border-gray-200">
-                  <h2 className="text-lg font-semibold">Recent Activity</h2>
-                </div>
-                <div className="divide-y divide-gray-200">
-                  {recentActivity.map((activity) => (
-                    <div key={activity.id} className="p-4 flex items-center">
-                      <img
-                        src={activity.avatar}
-                        alt={activity.user}
-                        className="w-10 h-10 rounded-full mr-4"
-                      />
-                      <div className="flex-1">
-                        <h3 className="font-semibold">{activity.user}</h3>
-                        <p className="text-sm text-gray-600">
-                          {activity.action}
-                        </p>
-                      </div>
-                      <span className="text-sm text-gray-500">
-                        {activity.time}
-                      </span>
+              {user.role == "admin" && (
+                <>
+                  {/* Recent Activity */}
+                  <div className="bg-white rounded-lg shadow mb-6">
+                    <div className="p-4 border-b border-gray-200">
+                      <h2 className="text-lg font-semibold">Recent Activity</h2>
                     </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Top Users */}
-              <div className="bg-white rounded-lg shadow">
-                <div className="p-4 border-b border-gray-200">
-                  <h2 className="text-lg font-semibold">Top Users</h2>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    <div className="divide-y divide-gray-200">
+                      {recentActivity.map((activity) => (
+                        <div
+                          key={activity.id}
+                          className="p-4 flex items-center"
                         >
-                          User
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Documents
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Matches
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Success Rate
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {topUsers.map((user) => (
-                        <tr key={user.id}>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center">
-                              <div className="flex-shrink-0 h-10 w-10">
-                                <img
-                                  className="h-10 w-10 rounded-full"
-                                  src={user.avatar}
-                                  alt=""
-                                />
-                              </div>
-                              <div className="ml-4">
-                                <div className="text-sm font-medium text-gray-900">
-                                  {user.user}
-                                </div>
-                                <div className="text-sm text-gray-500">
-                                  {user.email}
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {user.documents}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {user.matches}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">
-                              {user.successRate}%
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
-                              <div
-                                className="bg-green-500 h-2 rounded-full"
-                                style={{ width: `${user.successRate}%` }}
-                              ></div>
-                            </div>
-                          </td>
-                        </tr>
+                          <img
+                            src={activity.avatar}
+                            alt={activity.user}
+                            className="w-10 h-10 rounded-full mr-4"
+                          />
+                          <div className="flex-1">
+                            <h3 className="font-semibold">{activity.user}</h3>
+                            <p className="text-sm text-gray-600">
+                              {activity.action}
+                            </p>
+                          </div>
+                          <span className="text-sm text-gray-500">
+                            {activity.time}
+                          </span>
+                        </div>
                       ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                    </div>
+                  </div>
+                  {/* Top Users */}
+                  <div className="bg-white rounded-lg shadow">
+                    <div className="p-4 border-b border-gray-200">
+                      <h2 className="text-lg font-semibold">Top Users</h2>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              User
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              Documents
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              Matches
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              Success Rate
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {topUsers.map((user) => (
+                            <tr key={user.id}>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex items-center">
+                                  <div className="flex-shrink-0 h-10 w-10">
+                                    <img
+                                      className="h-10 w-10 rounded-full"
+                                      src={user.avatar}
+                                      alt=""
+                                    />
+                                  </div>
+                                  <div className="ml-4">
+                                    <div className="text-sm font-medium text-gray-900">
+                                      {user.user}
+                                    </div>
+                                    <div className="text-sm text-gray-500">
+                                      {user.email}
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {user.documents}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {user.matches}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-900">
+                                  {user.successRate}%
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                  <div
+                                    className="bg-green-500 h-2 rounded-full"
+                                    style={{ width: `${user.successRate}%` }}
+                                  ></div>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
+              )}
             </>
           )}
 
@@ -544,9 +562,7 @@ const AdminPanel = () => {
                         <tr key={request._id}>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
-                              <div className="flex-shrink-0 h-10 w-10">
-                                PK
-                              </div>
+                              <div className="flex-shrink-0 h-10 w-10">PK</div>
                               <div className="ml-4">
                                 <div className="text-sm font-medium text-gray-900">
                                   {request.userId?.name || "User"}
