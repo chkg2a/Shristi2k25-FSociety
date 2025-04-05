@@ -9,6 +9,7 @@ import RequestCredit from "./pages/RequestCredict.jsx";
 import { useEffect } from "react";
 import useAuthStore from "./store/authStore";
 import DocumentMatcher from "./pages/DocumentMatcher.jsx";
+import Payment from "./components/Payment.jsx";
 
 function App() {
   const { check } = useAuthStore();
@@ -27,6 +28,7 @@ function App() {
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/dashboard" element={<AdminPanel />} />
           <Route path="/request-credits" element={<RequestCredit />} />
+          <Route path="/wallet" element={<Payment />} />
         </Routes>
       </BrowserRouter>
     </>
