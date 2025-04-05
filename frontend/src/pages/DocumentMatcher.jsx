@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Cloud, FileText, Upload, Scale } from "lucide-react"; // 🔁 Changed Compare to Scale
 import axios from "axios";
 import Navbar from "../components/NavBar";
+import useAuthStore from "../store/authStore";
 
 const DocumentMatcher = () => {
   const [documents, setDocuments] = useState([]);
@@ -10,6 +11,7 @@ const DocumentMatcher = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [matching, setMatching] = useState(false);
   const [matchResults, setMatchResults] = useState(null);
+  const { getAnalytics } = useAuthStore();
   const [selectedDocs, setSelectedDocs] = useState({
     doc1: null,
     doc2: null,
@@ -23,6 +25,7 @@ const DocumentMatcher = () => {
   const getUserDocuments = async () => {
     try {
       setLoading(true);
+      await getAnalytics();
       const res = await axios.get("http://localhost:3000/api/v1/document");
       const formattedDocuments = res.data.documents.map((doc) => ({
         id: doc._id,
@@ -77,7 +80,7 @@ const DocumentMatcher = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       getUserDocuments();
@@ -99,7 +102,7 @@ const DocumentMatcher = () => {
       setMatching(true);
       setError(null);
 
-      const res = await axios.post("http://localhost:3000/api/v1/document/match", {
+      const res = await axios.post("http://localhost:3000/api/v1/match", {
         sourceDocumentId: doc1Id,
         targetDocumentId: doc2Id,
       });

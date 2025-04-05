@@ -23,15 +23,45 @@ const AdminPanel = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [pendingRequests, setPendingRequests] = useState([]);
-  const { user } = useAuthStore();
+  const { getAnalytics, user } = useAuthStore();
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const res = await getAnalytics(); // should return full analytics object
+        const data = res?.data;
+
+        if (data) {
+          setStats({
+            documents: data.stats.totalScans, // or get count from another API
+            users: data.stats.totalUsers,
+            matchRate: Math.floor(
+              (data.stats.todayScans / data.stats.totalScans) * 100 || 0,
+            ),
+            scansMade: data.stats.totalScans,
+          });
+
+          setTopUsers(data.topUsers || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch analytics", error);
+      }
+    };
+
+    if (activeTab === "dashboard") {
+      fetchAnalytics();
+    }
+  }, [activeTab]);
 
   // Mock data - in a real app, this would come from API calls
-  const stats = {
-    documents: 2451,
-    users: 1257,
-    matchRate: 89,
-    scansMade: 3842,
-  };
+  const [stats, setStats] = useState({
+    documents: 0,
+    users: 0,
+    matchRate: 0,
+    scansMade: 0,
+  });
+
+  const [topUsers, setTopUsers] = useState([]);
 
   const recentActivity = [
     {
@@ -54,27 +84,6 @@ const AdminPanel = () => {
       avatar: "/api/placeholder/40/40",
       action: "Matched 3 documents with 'Marketing Strategy'",
       time: "6h ago",
-    },
-  ];
-
-  const topUsers = [
-    {
-      id: 1,
-      user: "Emma Thompson",
-      email: "emma@example.com",
-      avatar: "/api/placeholder/40/40",
-      documents: 245,
-      matches: 186,
-      successRate: 95,
-    },
-    {
-      id: 2,
-      user: "James Wilson",
-      email: "james@example.com",
-      avatar: "/api/placeholder/40/40",
-      documents: 189,
-      matches: 140,
-      successRate: 83,
     },
   ];
 

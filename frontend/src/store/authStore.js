@@ -114,9 +114,8 @@ const useAuthStore = create((set) => ({
   getAnalytics:async()=>{
         try {
             const res=await axios.get("http://localhost:3000/api/v1/admin/analytics");
-            console.log(res);
+            return res
         } catch (error) {
-            console.log(error);
             return error;
         }
   }
