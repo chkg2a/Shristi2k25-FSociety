@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { FaEthereum, FaRupeeSign, FaCoins } from "react-icons/fa";
 import { SiRazorpay } from "react-icons/si";
-
+import { useNavigate } from "react-router-dom";
 const CreditsSection = ({ credits }) => {
   const [creditsToBuy, setCreditsToBuy] = useState(100);
-
-  const handleRazorpayPayment = () => {
+  const navigate = useNavigate();
+    const handleRazorpayPayment = () => {
     // Razorpay integration logic here
     console.log(`Buying ${creditsToBuy} credits with Razorpay`);
   };
@@ -51,7 +51,7 @@ const CreditsSection = ({ credits }) => {
           </button>
 
           <button
-            onClick={handleCryptoPayment}
+            onClick={()=>navigate("/wallet")}
             className="w-full flex items-center justify-center gap-2 bg-purple-700 hover:bg-purple-800 text-white font-medium py-2 px-4 rounded-lg transition"
           >
             <FaEthereum className="text-lg" />

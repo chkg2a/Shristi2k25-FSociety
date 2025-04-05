@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
-
+import axios from "axios";  
 const Payment = () => {
     const [account, setAccount] = useState("");
     const [amount, setAmount] = useState("");
@@ -36,29 +36,42 @@ const Payment = () => {
         }
     };
 
-    const handleTopUp = async () => {
-        if (!signer || !amount || parseFloat(amount) <= 0) {
-            alert("Enter a valid amount");
-            return;
-        }
+  
+const handleTopUp = async () => {
+    if (!signer || !amount || parseFloat(amount) <= 0) {
+        alert("Enter a valid amount");
+        return;
+    }
 
-        try {
-            setLoading(true);
-            const tx = await signer.sendTransaction({
-                to: contractAddress,
-                value: ethers.parseEther(amount),
-            });
+    try {
+        setLoading(true);
 
-            await tx.wait();
-            alert("Top-up sent successfully!");
-            setAmount("");
-        } catch (error) {
-            console.error("Top-up error:", error);
-            alert("Top-up failed: " + (error.reason || error.message));
-        } finally {
-            setLoading(false);
-        }
-    };
+        // Send the ETH
+        const tx = await signer.sendTransaction({
+            to: contractAddress,
+            value: ethers.parseEther(amount),
+        });
+
+        await tx.wait();
+        console.log(tx);
+        alert("Top-up sent successfully!");
+        setAmount("");
+
+        // 🔁 Automatically call credit request API after successful tx
+        await axios.post('http://localhost:3000/api/v1/credit/request', {
+            requestedCredits: 50,
+            reason: tx.hash // use tx hash as reason
+        });
+
+        alert("Credit request sent successfully!");
+
+    } catch (error) {
+        console.error("Top-up error:", error);
+        alert("Top-up failed: " + (error.reason || error.message));
+    } finally {
+        setLoading(false);
+    }
+};
 
     return (
         <div className="max-w-lg mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
