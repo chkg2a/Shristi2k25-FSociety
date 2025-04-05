@@ -57,8 +57,8 @@ const Navbar = () => {
         <div className="hidden md:flex items-center">
           {isAuthenticated ? (
             <Link to="/profile">
-              <div className="w-[32px] h-[32px] overflow-hidden">
-                <div className="flex items-center w-full h-full rounded-full p-2 bg-gray-200">
+              <div className="w-[48px] h-[48px] overflow-hidden">
+                <div className="flex items-center justify-center w-full h-full rounded-full p-2 bg-gray-200">
                   <p>{getInitials(user.name)}</p>
                 </div>
               </div>

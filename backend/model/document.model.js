@@ -8,7 +8,7 @@ const documentSchema = new mongoose.Schema({
     contentText: { type: String, required: true },
     uploadDate: { type: Date, default: Date.now },
     wordFrequency: { type: Map, of: Number }
-  });
+  }, { timestamps: true });
 
 
   const Document = mongoose.model('Document', documentSchema);
