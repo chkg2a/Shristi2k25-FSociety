@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
+import { CheckCircle, XCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Users,
@@ -155,14 +157,22 @@ const AdminPanel = () => {
 
   const handleCreditAction = async (requestId, action) => {
     try {
+      const toastId = toast.loading(
+        `${action === "approved" ? "Approving" : "Rejecting"} request...`,
+      );
       await axios.post("http://localhost:3000/api/v1/credit/admin/process", {
         requestId,
         status: action,
       });
 
+      toast.success(
+        `Request ${action === "approved" ? "approved" : "rejected"} successfully`,
+        { id: toastId },
+      );
       getAllPendingRequests();
     } catch (error) {
       console.log(error);
+      toast.error("Something went wrong while processing the request.");
     }
   };
 
@@ -660,19 +670,22 @@ const AdminPanel = () => {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             <button
-                              className="bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium mr-2"
+                              className="flex items-center gap-2 bg-green-100 text-green-800 hover:bg-green-200 transition-all duration-200 px-4 py-1.5 rounded-full font-semibold shadow-sm"
                               onClick={() =>
                                 handleCreditAction(request._id, "approved")
                               }
                             >
+                              <CheckCircle size={16} />
                               Approve
                             </button>
+
                             <button
-                              className="bg-red-100 text-red-800 px-3 py-1 rounded-full font-medium"
+                              className="flex items-center gap-2 bg-red-100 text-red-800 hover:bg-red-200 transition-all duration-200 px-4 py-1.5 rounded-full font-semibold shadow-sm"
                               onClick={() =>
                                 handleCreditAction(request._id, "reject")
                               }
                             >
+                              <XCircle size={16} />
                               Reject
                             </button>
                           </td>

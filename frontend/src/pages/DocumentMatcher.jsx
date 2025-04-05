@@ -229,9 +229,12 @@ const DocumentMatcher = () => {
             <>
               <div className="bg-white w-full rounded-lg shadow-md p-6 mb-6">
                 <h3 className="font-medium mb-4">Select Document to Compare</h3>
-
                 {loading ? (
-                  <p>Loading documents...</p>
+                  <div className="bg-white p-6 rounded-xl shadow-md animate-pulse">
+                    <div className="h-5 bg-gray-300 rounded w-1/2 mb-4"></div>
+                    <div className="h-10 bg-gray-200 rounded mb-3"></div>
+                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  </div>
                 ) : (
                   <div className="bg-white p-6 rounded-xl shadow-md">
                     <h4 className="text-lg font-semibold text-gray-800 mb-3">
@@ -260,7 +263,6 @@ const DocumentMatcher = () => {
                     </p>
                   </div>
                 )}
-
                 <div className="mt-6 flex justify-center">
                   <button
                     className={`${
