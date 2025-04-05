@@ -4,8 +4,8 @@ import axios from "axios";
 axios.defaults.withCredentials = true;
 
 const useAuthStore = create((set) => ({
-  user: null,
-  isAuthenticated: false,
+    user: null,
+    isAuthenticated: false,
   login: async (email, password) => {
     try {
       const res = await axios.post("http://localhost:3000/api/v1/auth/login", {
@@ -129,6 +129,14 @@ const useAuthStore = create((set) => ({
             console.log(error);
             return error;
         }
+  },
+  logout:async()=>{
+    try {
+        const res=await axios.post("http://localhost:3000/api/v1/auth/logout");
+        
+    } catch (error) {
+        
+    }
   }
 }));
 
