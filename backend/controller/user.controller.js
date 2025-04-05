@@ -2,7 +2,7 @@ import User from "../model/user.model.js"; // adjust the path if different
 
 // Controller to get user by ID
 export const getUserById = async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.body;
 
     try {
         const user = await User.findById(id).select("-password"); // exclude password

@@ -90,7 +90,7 @@ const useAuthStore = create((set) => ({
   },
   fetchUser: async (id) => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/v1/user/${id}`);
+      const res = await axios.post(`http://localhost:3000/api/v1/user/`,{id});
       console.log("Fetched user:", res.data);
       set({ user: res.data });
       return res.data;

@@ -23,7 +23,7 @@ const AdminPanel = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [pendingRequests, setPendingRequests] = useState([]);
-  const { getAnalytics, user } = useAuthStore();
+  const { getAnalytics, user,fetchUser } = useAuthStore();
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -104,11 +104,13 @@ const AdminPanel = () => {
 
   // Function to get all pending credit requests
   const getAllPendingRequests = async () => {
+    await fetchUser();
     setLoading(true);
     try {
       const res = await axios.get(
         "http://localhost:3000/api/v1/credit/admin/pending",
       );
+      console.log(res);
       if (res.data) {
         setPendingRequests(res.data.requests);
       }

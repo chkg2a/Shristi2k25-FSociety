@@ -40,9 +40,9 @@ export const getUserCreditRequests = async (req, res) => {
 export const getPendingCreditRequests = async (req, res) => {
   try {
     const requests = await CreditRequest.find({ status: 'pending' })
-      .populate('userId', 'username email')
+      .populate('userId', 'name email')
       .sort({ requestDate: 1 });
-
+    console.log(requests);
     res.status(200).json({ requests });
   } catch (error) {
     res.status(500).json({ message: error.message });
