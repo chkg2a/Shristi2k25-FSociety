@@ -5,7 +5,6 @@ import SignIn from "./pages/SignIn.jsx";
 import Home from "./pages/Home.jsx";
 import DocumentUpload from './components/DocumentUpload.jsx';
 import AdminPanel from "./pages/AdminPanel.jsx"
-import DocumentScanner from "./pages/DocumentScanner.jsx";
 import RequestCredit from "./pages/RequestCredict.jsx";
 import { useEffect } from "react";
 import useAuthStore from "./store/authStore";
@@ -26,9 +25,8 @@ function App() {
           <Route path="/document-matching" element={<DocumentMatcher/>} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/upload-document" element={<DocumentUpload />} />
-          <Route path="/request-credits" element={<RequestCredit />} />
-          <Route path="/profile" element={<AdminPanel />} />
+          <Route path="/dashboard" element={<AdminPanel />} />
+          <Route path="/admin-dashboard" element={<AdminPanel />} />
           <Route path="/request-credits" element={<RequestCredit />} />
         </Routes>
       </BrowserRouter>

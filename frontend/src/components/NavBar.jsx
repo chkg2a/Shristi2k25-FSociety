@@ -43,10 +43,10 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <li><Link to="/upload" className="text-gray-600 hover:text-blue-500">Upload Document</Link></li>
+                <li><Link to="/document-upload" className="text-gray-600 hover:text-blue-500">Upload Document</Link></li>
                 <li><Link to="/document-matching" className="text-gray-600 hover:text-blue-500">Document Matcher</Link></li>
                 <li><Link to="/dashboard" className="text-gray-600 hover:text-blue-500">Dashboard</Link></li>
-                <li><Link to="/admin" className="text-gray-600 hover:text-blue-500">Admin Dashboard</Link></li>
+                <li><Link to="/admin-dashboard" className="text-gray-600 hover:text-blue-500">Admin Dashboard</Link></li>
                 <li><Link to="/buy-credits" className="text-gray-600 hover:text-blue-500">Buy Credits</Link></li>
               </>
             )}

@@ -11,7 +11,7 @@ import {
   Search,
   Bell,
   User,
-  CreditCard
+  CreditCard,
 } from "lucide-react";
 import axios from "axios";
 import ReportsSection from "../components/ReportsSection";
@@ -21,39 +21,39 @@ const AdminPanel = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [pendingRequests, setPendingRequests] = useState([]);
-  
+
   // Mock data - in a real app, this would come from API calls
   const stats = {
     documents: 2451,
     users: 1257,
     matchRate: 89,
-    scansMade: 3842
+    scansMade: 3842,
   };
-  
+
   const recentActivity = [
     {
       id: 1,
       user: "Michael Cooper",
       avatar: "/api/placeholder/40/40",
       action: "Uploaded 'Q4 Financial Report.pdf'",
-      time: "2h ago"
+      time: "2h ago",
     },
     {
       id: 2,
       user: "Sarah Wilson",
       avatar: "/api/placeholder/40/40",
       action: "Downloaded 'Project Proposal.docx'",
-      time: "4h ago"
+      time: "4h ago",
     },
     {
       id: 3,
       user: "David Brown",
       avatar: "/api/placeholder/40/40",
       action: "Matched 3 documents with 'Marketing Strategy'",
-      time: "6h ago"
-    }
+      time: "6h ago",
+    },
   ];
-  
+
   const topUsers = [
     {
       id: 1,
@@ -62,7 +62,7 @@ const AdminPanel = () => {
       avatar: "/api/placeholder/40/40",
       documents: 245,
       matches: 186,
-      successRate: 95
+      successRate: 95,
     },
     {
       id: 2,
@@ -71,8 +71,8 @@ const AdminPanel = () => {
       avatar: "/api/placeholder/40/40",
       documents: 189,
       matches: 140,
-      successRate: 83
-    }
+      successRate: 83,
+    },
   ];
 
   // Sidebar navigation options
@@ -82,17 +82,18 @@ const AdminPanel = () => {
     { id: "users", label: "Manage Users", icon: Users },
     { id: "credits", label: "Credit Requests", icon: CreditCard },
     { id: "reports", label: "View Reports", icon: BarChart },
-    { id: "settings", label: "Settings", icon: Settings }
+    { id: "settings", label: "Settings", icon: Settings },
   ];
 
   // Function to get all pending credit requests
   const getAllPendingRequests = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:3000/api/v1/credit/admin/pending");
-      console.log(res);
-      if (res.data && res.data.data) {
-        setPendingRequests(res.data.data);
+      const res = await axios.get(
+        "http://localhost:3000/api/v1/credit/admin/pending",
+      );
+      if (res.data) {
+        setPendingRequests(res.data.requests);
       }
     } catch (error) {
       console.log(error);
@@ -112,12 +113,20 @@ const AdminPanel = () => {
   const handleCreditAction = async (requestId, action) => {
     try {
       // Implement the API call for approval/rejection
-      await axios.put(`http://localhost:3000/api/v1/credit/admin/${action}/${requestId}`);
+      await axios.put(
+        `http://localhost:3000/api/v1/credit/admin/${action}/${requestId}`,
+      );
       // Refresh the list
       getAllPendingRequests();
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const getInitials = (fullName) => {
+    if (!fullName) return "";
+    const nameParts = fullName.trim().split(" ");
+    return nameParts.map((part) => part[0]?.toUpperCase() || "").join("");
   };
 
   return (
@@ -127,9 +136,11 @@ const AdminPanel = () => {
         <div className="p-4 border-b border-gray-200">
           <h1 className="text-xl font-bold text-blue-600">DocScanner Admin</h1>
         </div>
-        
+
         <div className="p-4 border-b border-gray-200">
-          <h2 className="text-sm font-semibold text-gray-600 mb-3">Quick Actions</h2>
+          <h2 className="text-sm font-semibold text-gray-600 mb-3">
+            Quick Actions
+          </h2>
           <nav>
             {sidebarOptions.map((option) => (
               <button
@@ -163,7 +174,10 @@ const AdminPanel = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <Search className="absolute left-3 top-2.5 text-gray-500" size={16} />
+                <Search
+                  className="absolute left-3 top-2.5 text-gray-500"
+                  size={16}
+                />
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -171,9 +185,9 @@ const AdminPanel = () => {
                 <Bell size={20} className="text-gray-600" />
               </button>
               <div className="flex items-center">
-                <img 
-                  src="/api/placeholder/36/36" 
-                  alt="Profile" 
+                <img
+                  src="/api/placeholder/36/36"
+                  alt="Profile"
                   className="w-8 h-8 rounded-full"
                 />
                 <span className="ml-2 font-semibold">Admin User</span>
@@ -199,7 +213,7 @@ const AdminPanel = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="bg-white rounded-lg shadow p-4">
                   <div className="flex items-center">
                     <div className="p-3 rounded-full bg-green-100 text-green-600 mr-4">
@@ -211,7 +225,7 @@ const AdminPanel = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="bg-white rounded-lg shadow p-4">
                   <div className="flex items-center">
                     <div className="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
@@ -223,7 +237,7 @@ const AdminPanel = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="bg-white rounded-lg shadow p-4">
                   <div className="flex items-center">
                     <div className="p-3 rounded-full bg-orange-100 text-orange-600 mr-4">
@@ -236,7 +250,7 @@ const AdminPanel = () => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Recent Activity */}
               <div className="bg-white rounded-lg shadow mb-6">
                 <div className="p-4 border-b border-gray-200">
@@ -252,14 +266,18 @@ const AdminPanel = () => {
                       />
                       <div className="flex-1">
                         <h3 className="font-semibold">{activity.user}</h3>
-                        <p className="text-sm text-gray-600">{activity.action}</p>
+                        <p className="text-sm text-gray-600">
+                          {activity.action}
+                        </p>
                       </div>
-                      <span className="text-sm text-gray-500">{activity.time}</span>
+                      <span className="text-sm text-gray-500">
+                        {activity.time}
+                      </span>
                     </div>
                   ))}
                 </div>
               </div>
-              
+
               {/* Top Users */}
               <div className="bg-white rounded-lg shadow">
                 <div className="p-4 border-b border-gray-200">
@@ -269,16 +287,28 @@ const AdminPanel = () => {
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           User
                         </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           Documents
                         </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           Matches
                         </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           Success Rate
                         </th>
                       </tr>
@@ -289,11 +319,19 @@ const AdminPanel = () => {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <div className="flex-shrink-0 h-10 w-10">
-                                <img className="h-10 w-10 rounded-full" src={user.avatar} alt="" />
+                                <img
+                                  className="h-10 w-10 rounded-full"
+                                  src={user.avatar}
+                                  alt=""
+                                />
                               </div>
                               <div className="ml-4">
-                                <div className="text-sm font-medium text-gray-900">{user.user}</div>
-                                <div className="text-sm text-gray-500">{user.email}</div>
+                                <div className="text-sm font-medium text-gray-900">
+                                  {user.user}
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                  {user.email}
+                                </div>
                               </div>
                             </div>
                           </td>
@@ -304,7 +342,9 @@ const AdminPanel = () => {
                             {user.matches}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">{user.successRate}%</div>
+                            <div className="text-sm text-gray-900">
+                              {user.successRate}%
+                            </div>
                             <div className="w-full bg-gray-200 rounded-full h-2">
                               <div
                                 className="bg-green-500 h-2 rounded-full"
@@ -320,7 +360,7 @@ const AdminPanel = () => {
               </div>
             </>
           )}
-          
+
           {activeTab === "upload" && (
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-lg font-semibold mb-4">Upload Document</h2>
@@ -339,7 +379,7 @@ const AdminPanel = () => {
               </div>
             </div>
           )}
-          
+
           {activeTab === "users" && (
             <div className="bg-white rounded-lg shadow">
               <div className="p-4 border-b border-gray-200 flex justify-between items-center">
@@ -362,29 +402,42 @@ const AdminPanel = () => {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
                         User
                       </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
                         Role
                       </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
                         Status
                       </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
                         Actions
                       </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {[...topUsers, 
+                    {[
+                      ...topUsers,
                       {
                         id: 3,
                         user: "Alex Johnson",
                         email: "alex@example.com",
                         avatar: "/api/placeholder/40/40",
                         role: "Admin",
-                        status: "Active"
+                        status: "Active",
                       },
                       {
                         id: 4,
@@ -392,18 +445,26 @@ const AdminPanel = () => {
                         email: "jessica@example.com",
                         avatar: "/api/placeholder/40/40",
                         role: "User",
-                        status: "Inactive"
-                      }
+                        status: "Inactive",
+                      },
                     ].map((user) => (
                       <tr key={user.id}>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="flex-shrink-0 h-10 w-10">
-                              <img className="h-10 w-10 rounded-full" src={user.avatar} alt="" />
+                              <img
+                                className="h-10 w-10 rounded-full"
+                                src={user.avatar}
+                                alt=""
+                              />
                             </div>
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">{user.user}</div>
-                              <div className="text-sm text-gray-500">{user.email}</div>
+                              <div className="text-sm font-medium text-gray-900">
+                                {user.user}
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                {user.email}
+                              </div>
                             </div>
                           </div>
                         </td>
@@ -411,15 +472,23 @@ const AdminPanel = () => {
                           {user.role || "User"}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            user.status === "Inactive" ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
-                          }`}>
+                          <span
+                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              user.status === "Inactive"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-green-100 text-green-800"
+                            }`}
+                          >
                             {user.status || "Active"}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <button className="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
-                          <button className="text-red-600 hover:text-red-900">Delete</button>
+                          <button className="text-blue-600 hover:text-blue-900 mr-3">
+                            Edit
+                          </button>
+                          <button className="text-red-600 hover:text-red-900">
+                            Delete
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -429,7 +498,9 @@ const AdminPanel = () => {
               <div className="px-4 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-700">
-                    Showing <span className="font-medium">1</span> to <span className="font-medium">4</span> of <span className="font-medium">4</span> users
+                    Showing <span className="font-medium">1</span> to{" "}
+                    <span className="font-medium">4</span> of{" "}
+                    <span className="font-medium">4</span> users
                   </p>
                 </div>
                 <div className="flex-1 flex justify-end">
@@ -443,13 +514,15 @@ const AdminPanel = () => {
               </div>
             </div>
           )}
-          
+
           {/* Credit Requests Tab */}
           {activeTab === "credits" && (
             <div className="bg-white rounded-lg shadow">
               <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-                <h2 className="text-lg font-semibold">Pending Credit Requests</h2>
-                <button 
+                <h2 className="text-lg font-semibold">
+                  Pending Credit Requests
+                </h2>
+                <button
                   className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                   onClick={getAllPendingRequests}
                 >
@@ -464,25 +537,42 @@ const AdminPanel = () => {
                   </div>
                 ) : pendingRequests.length === 0 ? (
                   <div className="text-center py-8">
-                    <p className="text-gray-500">No pending credit requests found.</p>
+                    <p className="text-gray-500">
+                      No pending credit requests found.
+                    </p>
                   </div>
                 ) : (
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           User
                         </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           Request Date
                         </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           Amount
                         </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           Description
                         </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           Actions
                         </th>
                       </tr>
@@ -493,11 +583,15 @@ const AdminPanel = () => {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <div className="flex-shrink-0 h-10 w-10">
-                                <img className="h-10 w-10 rounded-full" src="/api/placeholder/40/40" alt="" />
+                                <p>{getInitials(request.user.name)}</p>
                               </div>
                               <div className="ml-4">
-                                <div className="text-sm font-medium text-gray-900">{request.userId?.name || "User"}</div>
-                                <div className="text-sm text-gray-500">{request.userId?.email || "No email"}</div>
+                                <div className="text-sm font-medium text-gray-900">
+                                  {request.userId?.name || "User"}
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                  {request.userId?.email || "No email"}
+                                </div>
                               </div>
                             </div>
                           </td>
@@ -511,15 +605,19 @@ const AdminPanel = () => {
                             {request.description || "No description"}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            <button 
+                            <button
                               className="bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium mr-2"
-                              onClick={() => handleCreditAction(request._id, "approve")}
+                              onClick={() =>
+                                handleCreditAction(request._id, "approve")
+                              }
                             >
                               Approve
                             </button>
-                            <button 
+                            <button
                               className="bg-red-100 text-red-800 px-3 py-1 rounded-full font-medium"
-                              onClick={() => handleCreditAction(request._id, "reject")}
+                              onClick={() =>
+                                handleCreditAction(request._id, "reject")
+                              }
                             >
                               Reject
                             </button>
@@ -532,11 +630,9 @@ const AdminPanel = () => {
               </div>
             </div>
           )}
-          
-          {activeTab === "reports" && (
-            <ReportsSection/>
-          )}
-          
+
+          {activeTab === "reports" && <ReportsSection />}
+
           {activeTab === "settings" && (
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-lg font-semibold mb-4">Settings</h2>
@@ -547,7 +643,9 @@ const AdminPanel = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-medium">Document Storage</p>
-                        <p className="text-sm text-gray-600">Configure storage settings</p>
+                        <p className="text-sm text-gray-600">
+                          Configure storage settings
+                        </p>
                       </div>
                       <button className="px-3 py-1 border rounded-md hover:bg-gray-50">
                         Configure
@@ -556,7 +654,9 @@ const AdminPanel = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-medium">API Configuration</p>
-                        <p className="text-sm text-gray-600">Manage API settings and keys</p>
+                        <p className="text-sm text-gray-600">
+                          Manage API settings and keys
+                        </p>
                       </div>
                       <button className="px-3 py-1 border rounded-md hover:bg-gray-50">
                         Configure
@@ -564,14 +664,18 @@ const AdminPanel = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="border-t pt-4">
-                  <h3 className="text-md font-medium mb-2">Security Settings</h3>
+                  <h3 className="text-md font-medium mb-2">
+                    Security Settings
+                  </h3>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-medium">Authentication</p>
-                        <p className="text-sm text-gray-600">Configure login and authentication</p>
+                        <p className="text-sm text-gray-600">
+                          Configure login and authentication
+                        </p>
                       </div>
                       <button className="px-3 py-1 border rounded-md hover:bg-gray-50">
                         Configure
@@ -580,7 +684,9 @@ const AdminPanel = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-medium">User Permissions</p>
-                        <p className="text-sm text-gray-600">Manage role-based access</p>
+                        <p className="text-sm text-gray-600">
+                          Manage role-based access
+                        </p>
                       </div>
                       <button className="px-3 py-1 border rounded-md hover:bg-gray-50">
                         Configure
@@ -588,38 +694,54 @@ const AdminPanel = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="border-t pt-4">
-                  <h3 className="text-md font-medium mb-2">Notification Settings</h3>
+                  <h3 className="text-md font-medium mb-2">
+                    Notification Settings
+                  </h3>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-medium">Email Notifications</p>
-                        <p className="text-sm text-gray-600">Configure email alerts</p>
+                        <p className="text-sm text-gray-600">
+                          Configure email alerts
+                        </p>
                       </div>
                       <div className="flex items-center">
-                        <input 
-                          type="checkbox" 
-                          id="email-toggle" 
+                        <input
+                          type="checkbox"
+                          id="email-toggle"
                           className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                           defaultChecked
                         />
-                        <label htmlFor="email-toggle" className="ml-2 text-gray-700">Enabled</label>
+                        <label
+                          htmlFor="email-toggle"
+                          className="ml-2 text-gray-700"
+                        >
+                          Enabled
+                        </label>
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-medium">System Alerts</p>
-                        <p className="text-sm text-gray-600">Configure system alerts</p>
+                        <p className="text-sm text-gray-600">
+                          Configure system alerts
+                        </p>
                       </div>
                       <div className="flex items-center">
-                        <input 
-                          type="checkbox" 
-                          id="alerts-toggle" 
+                        <input
+                          type="checkbox"
+                          id="alerts-toggle"
                           className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                           defaultChecked
                         />
-                        <label htmlFor="alerts-toggle" className="ml-2 text-gray-700">Enabled</label>
+                        <label
+                          htmlFor="alerts-toggle"
+                          className="ml-2 text-gray-700"
+                        >
+                          Enabled
+                        </label>
                       </div>
                     </div>
                   </div>
@@ -634,3 +756,4 @@ const AdminPanel = () => {
 };
 
 export default AdminPanel;
+

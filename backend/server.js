@@ -2,6 +2,7 @@ import express from "express";
 import { connectDb } from "./db/connectDb.js";
 import dotenv from "dotenv";
 import authRoute from "./route/auth.route.js";
+import userRoute from "./route/user.route.js";
 import Check from "./route/check.route.js";
 import cookieParser from "cookie-parser";
 import routerAdmin from "./route/admin.route.js";
@@ -22,6 +23,7 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
 app.use("/api/v1/auth",authRoute);
+app.use("/api/v1/user", userRoute);
 app.use("/api/v1/verify",Check);
 app.use("/api/v1/admin",routerAdmin);
 app.use("/api/v1/credit",routerCredit);
