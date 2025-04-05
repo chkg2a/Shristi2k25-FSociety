@@ -118,6 +118,17 @@ const useAuthStore = create((set) => ({
         } catch (error) {
             return error;
         }
+  },
+  approveCredict:async(requestId,status)=>{
+        try {
+            const res=await axios.post("http://localhost:3000/api/v1/credit/admin/process",{
+                requestId,
+                status});
+            console.log(res);
+        } catch (error) {
+            console.log(error);
+            return error;
+        }
   }
 }));
 
