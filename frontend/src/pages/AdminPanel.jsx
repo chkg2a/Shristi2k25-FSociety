@@ -15,12 +15,14 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import ReportsSection from "../components/ReportsSection";
+import useAuthStore from "../store/authStore.js"
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [pendingRequests, setPendingRequests] = useState([]);
+  const { user } = useAuthStore()
 
   // Mock data - in a real app, this would come from API calls
   const stats = {
@@ -78,7 +80,6 @@ const AdminPanel = () => {
   // Sidebar navigation options
   const sidebarOptions = [
     { id: "dashboard", label: "Dashboard", icon: BarChart },
-    { id: "upload", label: "Upload Document", icon: Upload },
     { id: "users", label: "Manage Users", icon: Users },
     { id: "credits", label: "Credit Requests", icon: CreditCard },
     { id: "reports", label: "View Reports", icon: BarChart },
@@ -164,33 +165,13 @@ const AdminPanel = () => {
       <div className="flex-1 overflow-auto">
         {/* Top Navigation */}
         <header className="bg-white shadow-sm">
-          <div className="flex items-center justify-between px-6 py-3">
-            <div className="flex items-center">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="pl-9 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-300 w-64"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <Search
-                  className="absolute left-3 top-2.5 text-gray-500"
-                  size={16}
-                />
-              </div>
-            </div>
+          <div className="flex items-center justify-end px-6 py-3">
             <div className="flex items-center space-x-4">
               <button className="p-2 rounded-full hover:bg-gray-100">
                 <Bell size={20} className="text-gray-600" />
               </button>
               <div className="flex items-center">
-                <img
-                  src="/api/placeholder/36/36"
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full"
-                />
-                <span className="ml-2 font-semibold">Admin User</span>
+                <span className="ml-2 font-semibold">{user.name}</span>
               </div>
             </div>
           </div>
@@ -359,25 +340,6 @@ const AdminPanel = () => {
                 </div>
               </div>
             </>
-          )}
-
-          {activeTab === "upload" && (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold mb-4">Upload Document</h2>
-              <p className="text-gray-600 mb-4">
-                Upload documents to the system for processing and analysis.
-              </p>
-              {/* Upload form would go here */}
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
-                <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                <p className="mt-2 text-sm text-gray-600">
-                  Drag and drop files here, or click to select files
-                </p>
-                <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                  Select Files
-                </button>
-              </div>
-            </div>
           )}
 
           {activeTab === "users" && (
@@ -583,7 +545,7 @@ const AdminPanel = () => {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <div className="flex-shrink-0 h-10 w-10">
-                                <p>{getInitials(request.user.name)}</p>
+                                PK
                               </div>
                               <div className="ml-4">
                                 <div className="text-sm font-medium text-gray-900">
