@@ -53,8 +53,9 @@ export const getPendingCreditRequests = async (req, res) => {
 export const processCreditRequest = async (req, res) => {
   try {
     const { requestId, status } = req.body;
-
+    console.log(req.body);
     if (!['approved', 'rejected'].includes(status)) {
+        
       return res.status(400).json({ message: 'Invalid status' });
     }
 

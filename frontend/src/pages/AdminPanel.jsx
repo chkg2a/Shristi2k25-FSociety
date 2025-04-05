@@ -121,26 +121,27 @@ const AdminPanel = () => {
     }
   };
 
-  // Fetch pending requests when the credit tab is active
+  
   useEffect(() => {
     if (activeTab === "credits") {
       getAllPendingRequests();
     }
   }, [activeTab]);
 
-  // Function to handle approval/rejection of credit requests
-  const handleCreditAction = async (requestId, action) => {
-    try {
-      // Implement the API call for approval/rejection
-      await axios.put(
-        `http://localhost:3000/api/v1/credit/admin/${action}/${requestId}`,
-      );
-      // Refresh the list
-      getAllPendingRequests();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  
+const handleCreditAction = async (requestId, action) => {
+  try {
+   
+    await axios.post("http://localhost:3000/api/v1/credit/admin/process", {
+      requestId,
+      status: action 
+    });
+    
+    getAllPendingRequests();
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   const getInitials = (fullName) => {
     if (!fullName) return "";
@@ -597,7 +598,7 @@ const AdminPanel = () => {
                             <button
                               className="bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium mr-2"
                               onClick={() =>
-                                handleCreditAction(request._id, "approve")
+                                handleCreditAction(request._id, "approved")
                               }
                             >
                               Approve
