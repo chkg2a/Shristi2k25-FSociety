@@ -53,7 +53,7 @@ export const matchDocuments = async (sourceDoc, targetDocs) => {
     });
 
     return results.sort((a, b) => b.similarity - a.similarity);
-  } catch (error) {
+  } catch (error) {a
     console.error('Error in matchDocuments:', error);
     throw new Error(`Error matching documents: ${error.message}`);
   }

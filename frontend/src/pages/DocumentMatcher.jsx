@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Cloud, FileText, Upload, Scale } from "lucide-react"; // 🔁 Changed Compare to Scale
+import { Cloud, FileText, Upload, Scale } from "lucide-react";
 import axios from "axios";
 import Navbar from "../components/NavBar";
 import useAuthStore from "../store/authStore";
@@ -12,15 +12,7 @@ const DocumentMatcher = () => {
   const [matching, setMatching] = useState(false);
   const [matchResults, setMatchResults] = useState(null);
   const { getAnalytics } = useAuthStore();
-  const [selectedDocs, setSelectedDocs] = useState({
-    doc1: null,
-    doc2: null,
-  });
-
-  const [stats, setStats] = useState({
-    similarity: 0,
-    processingTime: 0,
-  });
+  const [selectedDoc, setSelectedDoc] = useState(null);
 
   const getUserDocuments = async () => {
     try {
@@ -56,11 +48,8 @@ const DocumentMatcher = () => {
     }
   };
 
-  const handleDocSelect = (docId, position) => {
-    setSelectedDocs((prev) => ({
-      ...prev,
-      [position]: docId,
-    }));
+  const handleDocSelect = (docId) => {
+    setSelectedDoc(docId);
   };
 
   const uploadDocument = async () => {
@@ -92,9 +81,9 @@ const DocumentMatcher = () => {
     }
   };
 
-  const matchDocument = async (doc1Id, doc2Id) => {
-    if (!doc1Id || !doc2Id) {
-      setError("Please select two documents to compare");
+  const matchDocuments = async (sourceDocId) => {
+    if (!sourceDocId) {
+      setError("Please select a document to compare");
       return;
     }
 
@@ -103,16 +92,10 @@ const DocumentMatcher = () => {
       setError(null);
 
       const res = await axios.post("http://localhost:3000/api/v1/match", {
-        sourceDocumentId: doc1Id,
-        targetDocumentId: doc2Id,
+        sourceDocumentId: sourceDocId,
       });
 
       setMatchResults(res.data);
-      setStats({
-        similarity: res.data.similarity || 0,
-        processingTime: res.data.processingTime || 0,
-      });
-
       setMatching(false);
     } catch (error) {
       console.error("Error matching documents:", error);
@@ -122,21 +105,18 @@ const DocumentMatcher = () => {
   };
 
   const handleStartMatching = async () => {
-    let doc1Id = selectedDocs.doc1;
-    let doc2Id = selectedDocs.doc2;
+    let sourceDocId = selectedDoc;
 
     if (selectedFile) {
       const newDocId = await uploadDocument();
       if (!newDocId) return;
 
-      if (!doc1Id) {
-        doc1Id = newDocId;
-      } else if (!doc2Id) {
-        doc2Id = newDocId;
+      if (!sourceDocId) {
+        sourceDocId = newDocId;
       }
     }
 
-    await matchDocument(doc1Id, doc2Id);
+    await matchDocuments(sourceDocId);
   };
 
   return (
@@ -152,7 +132,7 @@ const DocumentMatcher = () => {
               </div>
               <h2 className="text-lg font-medium mb-1">Upload Your Document</h2>
               <p className="text-sm text-gray-500 mb-4">
-                Upload a .txt file to compare with existing documents
+                Upload a .txt file to compare with your other documents
               </p>
 
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 w-full mb-4">
@@ -181,45 +161,28 @@ const DocumentMatcher = () => {
 
           {/* Document Selection Section */}
           <div className="bg-white w-full rounded-lg shadow-md p-6 mb-6">
-            <h3 className="font-medium mb-4">Select Documents to Compare</h3>
+            <h3 className="font-medium mb-4">Select Document to Compare</h3>
 
             {loading ? (
               <p>Loading documents...</p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Document 1 */}
-                <div className="border rounded-lg p-4">
-                  <h4 className="font-medium mb-2">Document 1</h4>
-                  <select
-                    className="w-full p-2 border rounded"
-                    value={selectedDocs.doc1 || ""}
-                    onChange={(e) => handleDocSelect(e.target.value, "doc1")}
-                  >
-                    <option value="">Select a document</option>
-                    {documents.map((doc) => (
-                      <option key={`doc1-${doc.id}`} value={doc.id}>
-                        {doc.name} ({doc.uploadDate})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Document 2 */}
-                <div className="border rounded-lg p-4">
-                  <h4 className="font-medium mb-2">Document 2</h4>
-                  <select
-                    className="w-full p-2 border rounded"
-                    value={selectedDocs.doc2 || ""}
-                    onChange={(e) => handleDocSelect(e.target.value, "doc2")}
-                  >
-                    <option value="">Select a document</option>
-                    {documents.map((doc) => (
-                      <option key={`doc2-${doc.id}`} value={doc.id}>
-                        {doc.name} ({doc.uploadDate})
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              <div className="border rounded-lg p-4">
+                <h4 className="font-medium mb-2">Document to Compare</h4>
+                <select
+                  className="w-full p-2 border rounded"
+                  value={selectedDoc || ""}
+                  onChange={(e) => handleDocSelect(e.target.value)}
+                >
+                  <option value="">Select a document</option>
+                  {documents.map((doc) => (
+                    <option key={doc.id} value={doc.id}>
+                      {doc.name} ({doc.uploadDate})
+                    </option>
+                  ))}
+                </select>
+                <p className="text-sm text-gray-500 mt-2">
+                  This document will be compared against all your other documents
+                </p>
               </div>
             )}
 
@@ -229,16 +192,13 @@ const DocumentMatcher = () => {
                   matching ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
                 } text-white rounded-md px-4 py-2 flex items-center justify-center`}
                 onClick={handleStartMatching}
-                disabled={
-                  matching ||
-                  (!selectedDocs.doc1 && !selectedDocs.doc2 && !selectedFile)
-                }
+                disabled={matching || (!selectedDoc && !selectedFile)}
               >
                 {matching ? (
                   "Comparing..."
                 ) : (
                   <>
-                    <Scale size={16} className="mr-2" /> {/* Updated Icon */}
+                    <Scale size={16} className="mr-2" />
                     Compare Documents
                   </>
                 )}
@@ -251,30 +211,36 @@ const DocumentMatcher = () => {
             <div className="bg-white w-full rounded-lg shadow-md p-6">
               <h3 className="font-medium mb-6">Comparison Results</h3>
 
-              <div className="flex justify-between mb-8">
-                <div className="text-center">
-                  <p className="text-sm text-gray-500">Similarity</p>
-                  <p className="text-2xl font-bold text-green-600">
-                    {stats.similarity}%
-                  </p>
-                </div>
-
-                <div className="text-center">
-                  <p className="text-sm text-gray-500">Processing Time</p>
-                  <p className="text-2xl font-bold text-purple-600">
-                    {stats.processingTime}s
-                  </p>
-                </div>
+              <div className="space-y-4">
+                {matchResults.results.map((result, index) => (
+                  <div key={result.documentId} className="border-b pb-4">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h4 className="font-medium">{result.originalName}</h4>
+                        <p className="text-sm text-gray-500">Document #{index + 1}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm text-gray-500">Similarity</p>
+                        <p className={`text-xl font-bold ${
+                          result.score > 70 ? 'text-green-600' : 
+                          result.score > 30 ? 'text-yellow-600' : 'text-red-600'
+                        }`}>
+                          {result.score}%
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              {matchResults.details && (
-                <div className="mt-4">
-                  <h4 className="font-medium mb-2">Detailed Results:</h4>
-                  <pre className="bg-gray-100 p-4 rounded text-sm overflow-x-auto">
-                    {JSON.stringify(matchResults.details, null, 2)}
-                  </pre>
-                </div>
-              )}
+              <div className="mt-6 text-center">
+                <p className="text-sm text-gray-500">
+                  Compared against {matchResults.results.length} documents
+                </p>
+                <p className="text-sm text-gray-500 mt-2">
+                  Remaining credits: {matchResults.remainingCredits}
+                </p>
+              </div>
             </div>
           )}
         </div>
