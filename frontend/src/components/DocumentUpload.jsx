@@ -88,55 +88,50 @@ const DocumentUpload = () => {
 
   return (
     <>
-      <Navbar />
-      <div className="h-screen flex flex-col items-center mx-auto bg-[#f9fafb] pt-8">
-        <div className="w-full max-w-4xl">
-          {/* Upload Section */}
-          <div className="bg-white w-full rounded-lg shadow-md p-8 mb-6">
-            <div className="flex flex-col items-center text-center">
-              <div className="bg-blue-100 p-2 rounded-full mb-2">
-                <Cloud className="text-blue-500" size={24} />
-              </div>
-              <h2 className="text-lg font-medium mb-1">Upload Your Document</h2>
-              <p className="text-sm text-gray-500 mb-4">
-                Upload a .txt file to store in the database for later matching
-              </p>
+      {/* Upload Section */}
+      <div className="bg-white w-full rounded-lg shadow-md p-8 mb-6">
+        <div className="flex flex-col items-center text-center">
+          <div className="bg-blue-100 p-2 rounded-full mb-2">
+            <Cloud className="text-blue-500" size={24} />
+          </div>
+          <h2 className="text-lg font-medium mb-1">Upload Your Document</h2>
+          <p className="text-sm text-gray-500 mb-4">
+            Upload a .txt file to store in the database for later matching
+          </p>
 
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 w-full mb-4">
-                <div className="flex flex-col items-center">
-                  <FileText className="text-gray-400 mb-2" size={24} />
-                  <p className="text-sm text-gray-500 mb-1">
-                    Drag and drop your file here or
-                  </p>
-                  {/* Modified file input */}
-                  <div className="w-[240px] flex items-center">
-                    <input
-                      type="file"
-                      accept=".txt"
-                      onChange={handleFileChange}
-                      className="block w-full text-sm text-gray-500
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 w-full mb-4">
+            <div className="flex flex-col items-center">
+              <FileText className="text-gray-400 mb-2" size={24} />
+              <p className="text-sm text-gray-500 mb-1">
+                Drag and drop your file here or
+              </p>
+              {/* Modified file input */}
+              <div className="w-[240px] flex items-center">
+                <input
+                  type="file"
+                  accept=".txt"
+                  onChange={handleFileChange}
+                  className="block w-full text-sm text-gray-500
                   file:mr-4 file:py-2 file:px-4
                   file:rounded-full file:border-0
                   file:text-sm file:font-semibold
                   file:bg-blue-50 file:text-blue-700
                   hover:file:bg-blue-100"
-                    />
-                  </div>
-                </div>
+                />
               </div>
-
-              <button
-                onClick={handleUpload}
-                disabled={loading || !file}
-                className={`bg-blue-500 text-white rounded-md px-4 py-2 flex items-center justify-center ${
-                  loading || !file ? "cursor-not-allowed opacity-50" : ""
-                }`}
-              >
-                <Upload size={16} className="mr-2" />
-                Upload File
-              </button>
             </div>
           </div>
+
+          <button
+            onClick={handleUpload}
+            disabled={loading || !file}
+            className={`bg-blue-500 text-white rounded-md px-4 py-2 flex items-center justify-center ${
+              loading || !file ? "cursor-not-allowed opacity-50" : ""
+            }`}
+          >
+            <Upload size={16} className="mr-2" />
+            Upload File
+          </button>
         </div>
       </div>
     </>

@@ -43,7 +43,6 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <li><Link to="/document-upload" className="text-gray-600 hover:text-blue-500">Upload Document</Link></li>
                 <li><Link to="/document-matching" className="text-gray-600 hover:text-blue-500">Document Matcher</Link></li>
                 <li><Link to="/dashboard" className="text-gray-600 hover:text-blue-500">Dashboard</Link></li>
               </>
@@ -97,7 +96,6 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
-                  <li className="py-2"><Link to="/upload" className="text-gray-600 hover:text-blue-500">Upload Document</Link></li>
                   <li className="py-2"><Link to="/document-matching" className="text-gray-600 hover:text-blue-500">Document Matcher</Link></li>
                   <li className="py-2"><Link to="/dashboard" className="text-gray-600 hover:text-blue-500">Dashboard</Link></li>
                 </>
