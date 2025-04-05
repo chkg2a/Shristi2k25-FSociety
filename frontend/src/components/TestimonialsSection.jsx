@@ -6,21 +6,21 @@ const TestimonialsSection = () => {
       id: 1,
       name: 'John Smith',
       title: 'CEO, TechCorp',
-      image: '/api/placeholder/50/50',
+      image: '/images/johndoe.png',
       quote: '"DocScan has streamlined our document processing workflow. The AI matching feature is incredibly accurate."'
     },
     {
       id: 2,
       name: 'Sarah Johnson',
       title: 'Operations Manager',
-      image: '/api/placeholder/50/50',
+      image: '/images/sarahjohnson.png',
       quote: '"The cloud storage integration makes it easy to access our documents from anywhere. Great solution!"'
     },
     {
       id: 3,
       name: 'Michael Chen',
       title: 'IT Director',
-      image: '/api/placeholder/50/50',
+      image: '/images/michaelchen.png',
       quote: '"The security features are robust and the API integration was seamless. Highly recommended!"'
     }
   ];

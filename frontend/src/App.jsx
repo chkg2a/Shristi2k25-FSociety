@@ -1,18 +1,20 @@
-import './App.css'
+import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import SignUp from './pages/SignUp';
-import SignIn from './pages/SignIn.jsx';
+import SignUp from "./pages/SignUp";
+import SignIn from "./pages/SignIn.jsx";
 import Home from "./pages/Home.jsx";
-import DocumentScanner from './pages/DocumentScanner.jsx';
 import DocumentUpload from './components/DocumentUpload.jsx';
-import { useEffect } from 'react';
-import useAuthStore from './store/authStore';
+import ProfilePage from "./pages/ProfilePage.jsx"
+import AdminPanel from "./pages/AdminPanel.jsx"
+import DocumentScanner from "./pages/DocumentScanner.jsx";
+import { useEffect } from "react";
+import useAuthStore from "./store/authStore";
 
 function App() {
-  const {check}=useAuthStore();
-  useEffect(()=>{
+  const { check } = useAuthStore();
+  useEffect(() => {
     check();
-  },[check]);
+  }, [check]);
 
   return (
     <>
@@ -23,10 +25,11 @@ function App() {
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/upload-document" element={<DocumentUpload />} />
+          <Route path="/profile" element={<AdminPanel />} />
         </Routes>
       </BrowserRouter>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

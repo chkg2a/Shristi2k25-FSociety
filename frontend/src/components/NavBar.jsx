@@ -4,10 +4,16 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const getInitials = (fullName) => {
+    if (!fullName) return "";
+    const nameParts = fullName.trim().split(" ");
+    return nameParts.map((part) => part[0]?.toUpperCase() || "").join("");
   };
 
   return (
@@ -37,43 +43,60 @@ const Navbar = () => {
         <div className="hidden md:flex items-center">
           <ul className="flex space-x-8 mr-8 justify-center">
             <li>
-              <a href="#features" className="text-gray-600 hover:text-blue-500">
+              <a
+                href="/#features"
+                className="text-gray-600 hover:text-blue-500"
+              >
                 Features
               </a>
             </li>
             <li>
-              <a href="#pricing" className="text-gray-600 hover:text-blue-500">
+              <a href="/#pricing" className="text-gray-600 hover:text-blue-500">
                 Pricing
               </a>
             </li>
             <li>
               <a
-                href="#testimonials"
+                href="/#testimonials"
                 className="text-gray-600 hover:text-blue-500"
               >
                 Testimonials
               </a>
             </li>
             <li>
-              <a href="#contact" className="text-gray-600 hover:text-blue-500">
+              <a href="/#contact" className="text-gray-600 hover:text-blue-500">
                 Contact
               </a>
             </li>
           </ul>
         </div>
-        <div className="flex items-center">
-          <Link
-            to="/sign-in"
-            className="text-gray-600 hover:text-blue-500 mr-6"
-          >
-            Sign In
-          </Link>
-          <Link
-            to="/get-started"
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-          >
-            Get Started
-          </Link>
+        <div className="hidden md:flex items-center">
+          {isAuthenticated ? (
+            <>
+              <Link to="/profile">
+                <div className="w-[32px] h-[32px] overflow-hidden">
+                  <div className="flex items-center w-full h-full rounded-full p-2 bg-gray-200">
+                    <p>{getInitials(user.name)}</p>
+                  </div>
+                </div>
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/sign-in"
+                className="text-gray-600 hover:text-blue-500 mr-6"
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/get-started"
+                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+              >
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Hamburger Button */}
@@ -122,7 +145,7 @@ const Navbar = () => {
             <ul className="flex flex-col p-4">
               <li className="py-2">
                 <a
-                  href="#features"
+                  href="/#features"
                   className="text-gray-600 hover:text-blue-500"
                 >
                   Features
@@ -130,7 +153,7 @@ const Navbar = () => {
               </li>
               <li className="py-2">
                 <a
-                  href="#pricing"
+                  href="/#pricing"
                   className="text-gray-600 hover:text-blue-500"
                 >
                   Pricing
@@ -138,7 +161,7 @@ const Navbar = () => {
               </li>
               <li className="py-2">
                 <a
-                  href="#testimonials"
+                  href="/#testimonials"
                   className="text-gray-600 hover:text-blue-500"
                 >
                   Testimonials
@@ -146,27 +169,19 @@ const Navbar = () => {
               </li>
               <li className="py-2">
                 <a
-                  href="#contact"
+                  href="/#contact"
                   className="text-gray-600 hover:text-blue-500"
                 >
                   Contact
                 </a>
               </li>
-              <li className="py-2">
-                <a
-                  href="/sign-in"
-                  className="text-gray-600 hover:text-blue-500"
-                >
-                  Sign In
-                </a>
-              </li>
               <li className="pt-4">
-                <a
-                  href="/get-started"
+                <Link
+                  to="/document-matching"
                   className="block text-center bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                 >
                   Get Started
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

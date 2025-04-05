@@ -6,11 +6,11 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { signup } = useAuthStore();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     const res = await signup(name, email, password);
-    if(res.status===201){
+    if (res.status === 201) {
       navigate("/document-matching");
     }
   };
