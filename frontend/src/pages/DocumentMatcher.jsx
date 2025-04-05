@@ -1,15 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Cloud, FileText, Upload } from "lucide-react";
+import axios from "axios";
 import Navbar from "../components/NavBar";
 
 const DocumentUploader = () => {
   const [isUploaded, setIsUploaded] = useState(true);
+  const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const documents = [
-    { id: 1, name: "document1.txt", modified: "Jan 15, 2025", matchRate: 88 },
-    { id: 2, name: "document2.txt", modified: "Jan 14, 2025", matchRate: 76 },
-    { id: 3, name: "document3.txt", modified: "Jan 13, 2025", matchRate: 65 },
-  ];
+  // Stats for the matching results
+  const [stats, setStats] = useState({
+    totalMatches: 0,
+    accuracy: 0,
+    processingTime: 0
+  });
+
+  // Function to fetch documents
+  const getUserDocuments = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get("http://localhost:3000/api/v1/document");
+      console.log("Documents fetched:", res.data);
+      
+      // Assuming the API returns an array of documents with the required fields
+      setDocuments(res.data);
+      
+      // You might want to calculate these stats based on the actual data
+      setStats({
+        totalMatches: res.data.length,
+        accuracy: 98, // Example value, calculate based on your data
+        processingTime: 1.2 // Example value, calculate based on your data
+      });
+      
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+      setError("Failed to load documents. Please try again later.");
+      setLoading(false);
+    }
+  };
+
+  // Fetch documents when component mounts
+  useEffect(() => {
+    getUserDocuments();
+  }, []);
 
   return (
     <>
@@ -51,53 +86,69 @@ const DocumentUploader = () => {
             <div className="bg-white w-full rounded-lg shadow-md p-6">
               <h3 className="font-medium mb-6">Matching Results</h3>
 
-              <div className="flex justify-between mb-8">
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-blue-600">24</p>
-                  <p className="text-xs text-gray-500">Total Matches</p>
+              {loading ? (
+                <div className="text-center py-8">
+                  <p>Loading documents...</p>
                 </div>
-
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-green-600">98%</p>
-                  <p className="text-xs text-gray-500">Accuracy</p>
+              ) : error ? (
+                <div className="text-center py-8 text-red-500">
+                  <p>{error}</p>
                 </div>
-
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-purple-600">1.2s</p>
-                  <p className="text-xs text-gray-500">Processing Time</p>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {documents.map((doc) => (
-                  <div
-                    key={doc.id}
-                    className="flex items-center justify-between border-b pb-3"
-                  >
-                    <div className="flex items-center">
-                      <FileText size={16} className="text-gray-400 mr-2" />
-                      <div>
-                        <p className="text-sm">{doc.name}</p>
-                        <p className="text-xs text-gray-500">
-                          Last modified: {doc.modified}
-                        </p>
-                      </div>
+              ) : (
+                <>
+                  <div className="flex justify-between mb-8">
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-blue-600">{stats.totalMatches}</p>
+                      <p className="text-xs text-gray-500">Total Matches</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm text-blue-600 font-medium">
-                        {doc.matchRate}%
-                      </p>
-                      <p className="text-xs text-gray-500">Match Rate</p>
+
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-green-600">{stats.accuracy}%</p>
+                      <p className="text-xs text-gray-500">Accuracy</p>
+                    </div>
+
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-purple-600">{stats.processingTime}s</p>
+                      <p className="text-xs text-gray-500">Processing Time</p>
                     </div>
                   </div>
-                ))}
-              </div>
 
-              <div className="flex justify-end mt-6">
-                <button className="text-blue-600 text-sm font-medium flex items-center">
-                  <Upload size={16} className="mr-1" /> Export Results
-                </button>
-              </div>
+                  <div className="space-y-3">
+                    {documents.length > 0 ? (
+                      documents.map((doc) => (
+                        <div
+                          key={doc.id}
+                          className="flex items-center justify-between border-b pb-3"
+                        >
+                          <div className="flex items-center">
+                            <FileText size={16} className="text-gray-400 mr-2" />
+                            <div>
+                              <p className="text-sm">{doc.name}</p>
+                              <p className="text-xs text-gray-500">
+                                Last modified: {doc.modified}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-blue-600 font-medium">
+                              {doc.matchRate}%
+                            </p>
+                            <p className="text-xs text-gray-500">Match Rate</p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-center py-4 text-gray-500">No documents found</p>
+                    )}
+                  </div>
+
+                  <div className="flex justify-end mt-6">
+                    <button className="text-blue-600 text-sm font-medium flex items-center">
+                      <Upload size={16} className="mr-1" /> Export Results
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>

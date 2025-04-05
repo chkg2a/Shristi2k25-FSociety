@@ -5,7 +5,6 @@ import SignIn from "./pages/SignIn.jsx";
 import Home from "./pages/Home.jsx";
 import DocumentUpload from './components/DocumentUpload.jsx';
 import AdminPanel from "./pages/AdminPanel.jsx"
-import DocumentScanner from "./pages/DocumentScanner.jsx";
 import RequestCredit from "./pages/RequestCredict.jsx";
 import { useEffect } from "react";
 import useAuthStore from "./store/authStore";

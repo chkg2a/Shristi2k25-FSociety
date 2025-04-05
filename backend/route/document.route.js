@@ -12,7 +12,7 @@ import { verifyToken } from "../middlwares/verifyToken.js";
 const routerDocument=express.Router();
 
 routerDocument.post("/upload",verifyToken,getUserDetails,uploadFile,uploadDocument);
-routerDocument.get("/",verifyToken,getUserDocuments);
+routerDocument.get("/",verifyToken,getUserDetails,getUserDocuments);
 routerDocument.get("/:id",verifyToken,getDocument);
 routerDocument.get("/download/:id",verifyToken,downloadDocument);
 

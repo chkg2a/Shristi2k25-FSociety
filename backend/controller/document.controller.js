@@ -71,13 +71,26 @@ const uploadDocument = async (req, res) => {
 
 const getUserDocuments = async (req, res) => {
   try {
+    if (!req.user || !req.user._id) {
+      console.log("User not authenticated");
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
     const documents = await Document.find({ userId: req.user._id })
       .select('originalName uploadDate _id')
       .sort({ uploadDate: -1 });
 
+    if (!documents) {
+      return res.status(200).json({ documents: [] });
+    }
+
     res.status(200).json({ documents });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error fetching user documents:", error);
+    res.status(500).json({ 
+      message: "Error fetching documents",
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
