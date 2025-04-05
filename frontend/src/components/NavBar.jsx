@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import useAuthStore from "../store/authStore";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuthStore();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -32,7 +35,7 @@ const Navbar = () => {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center">
-          <ul className="flex space-x-8 mr-8">
+          <ul className="flex space-x-8 mr-8 justify-center">
             <li>
               <a href="#features" className="text-gray-600 hover:text-blue-500">
                 Features
@@ -57,20 +60,20 @@ const Navbar = () => {
               </a>
             </li>
           </ul>
-          <div className="flex items-center">
-            <a
-              href="/sign-in"
-              className="text-gray-600 hover:text-blue-500 mr-6"
-            >
-              Sign In
-            </a>
-            <a
-              href="/get-started"
-              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-            >
-              Get Started
-            </a>
-          </div>
+        </div>
+        <div className="flex items-center">
+          <Link
+            to="/sign-in"
+            className="text-gray-600 hover:text-blue-500 mr-6"
+          >
+            Sign In
+          </Link>
+          <Link
+            to="/get-started"
+            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+          >
+            Get Started
+          </Link>
         </div>
 
         {/* Mobile Hamburger Button */}
