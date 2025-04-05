@@ -58,3 +58,4 @@ const DocumentScanningHero = () => {
 };
 
 export default DocumentScanningHero;
+

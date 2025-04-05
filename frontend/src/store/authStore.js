@@ -201,7 +201,12 @@ const useAuthStore = create((set) => ({
   logout: async () => {
     try {
       const res = await axios.post("http://localhost:3000/api/v1/auth/logout");
-    } catch (error) {}
+      set({ user: null, isAuthenticated: false });
+      return res;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
   },
 }));
 

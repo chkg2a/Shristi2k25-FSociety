@@ -174,7 +174,7 @@ const DocumentMatcher = () => {
   return (
     <>
       <Navbar />
-      <div className="flex h-screen justify-center mx-auto bg-[#f9fafb] pt-8 gap-8">
+      <div className="flex flex-col md:flex-row h-full min-h-screen justify-center mx-auto bg-[#f9fafb] pt-8 gap-8 ">
         <div className="w-full max-w-2xl">
           {/* Integrated Document Upload Section */}
           <div className="bg-white w-full rounded-lg shadow-md p-8 mb-6">
