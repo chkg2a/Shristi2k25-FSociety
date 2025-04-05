@@ -99,6 +99,18 @@ const useAuthStore = create((set) => ({
       return null;
     }
   },
+  matchDocument:async(sourceDocumentId,targetDocumentIds)=>{
+    try {
+        const res=await axios.post("hhtp://localhost:3000/api/v1/document/match",{
+            sourceDocumentId,
+            targetDocumentIds
+        });
+        console.log(res);
+    } catch (error) {
+        console.log(error);
+        return error;
+    }
+  }
 }));
 
 export default useAuthStore;

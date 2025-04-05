@@ -71,26 +71,13 @@ const uploadDocument = async (req, res) => {
 
 const getUserDocuments = async (req, res) => {
   try {
-    if (!req.user || !req.user._id) {
-      console.log("User not authenticated");
-      return res.status(401).json({ message: "User not authenticated" });
-    }
-
     const documents = await Document.find({ userId: req.user._id })
       .select('originalName uploadDate _id')
       .sort({ uploadDate: -1 });
 
-    if (!documents) {
-      return res.status(200).json({ documents: [] });
-    }
-
     res.status(200).json({ documents });
   } catch (error) {
-    console.error("Error fetching user documents:", error);
-    res.status(500).json({ 
-      message: "Error fetching documents",
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -154,64 +141,9 @@ const downloadDocument = async (req, res) => {
 };
 
 
-const compareDocuments = async (req, res) => {
-  try {
-    if (!req.files || !req.files.file1 || !req.files.file2) {
-      return res.status(400).json({ message: "Please upload both files for comparison" });
-    }
-
-    const file1 = req.files.file1[0];
-    const file2 = req.files.file2[0];
-
-    const { contentText: text1, wordFrequency: freq1 } = await processDocument(file1.path);
-    const { contentText: text2, wordFrequency: freq2 } = await processDocument(file2.path);
-
-    // Calculate similarity
-    const similarity = calculateSimilarity(freq1, freq2);
-
-    // Clean up uploaded files
-    fs.unlinkSync(file1.path);
-    fs.unlinkSync(file2.path);
-
-    res.status(200).json({
-      message: "Documents compared successfully",
-      similarity: similarity,
-      details: {
-        file1: {
-          name: file1.originalname,
-          wordCount: Object.keys(freq1).length
-        },
-        file2: {
-          name: file2.originalname,
-          wordCount: Object.keys(freq2).length
-        }
-      }
-    });
-  } catch (error) {
-    console.error("Error comparing documents:", error);
-    res.status(500).json({ message: "Error comparing documents" });
-  }
-};
-
-const calculateSimilarity = (freq1, freq2) => {
-  const allWords = new Set([...Object.keys(freq1), ...Object.keys(freq2)]);
-  let commonWords = 0;
-  let totalWords = 0;
-
-  allWords.forEach(word => {
-    const count1 = freq1[word] || 0;
-    const count2 = freq2[word] || 0;
-    commonWords += Math.min(count1, count2);
-    totalWords += Math.max(count1, count2);
-  });
-
-  return totalWords === 0 ? 0 : (commonWords / totalWords) * 100;
-};
-
 export {
   uploadDocument,
   getUserDocuments,
   getDocument,
-  downloadDocument,
-  compareDocuments
+  downloadDocument
 };

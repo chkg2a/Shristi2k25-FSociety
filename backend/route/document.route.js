@@ -17,4 +17,4 @@ routerDocument.get("/:id",verifyToken,getDocument);
 routerDocument.get("/download/:id",verifyToken,downloadDocument);
 
 
-export default routerDocument;  
+export default routerDocument;
