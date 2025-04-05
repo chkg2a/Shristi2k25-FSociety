@@ -1,5 +1,6 @@
 import User from '../model/user.model.js';
 import CreditRequest from '../model/CreditRequest.model.js';
+import mongoose from 'mongoose';
 
 
 export const requestCredits = async (req, res) => {
@@ -53,10 +54,13 @@ export const getPendingCreditRequests = async (req, res) => {
 export const processCreditRequest = async (req, res) => {
   try {
     const { requestId, status } = req.body;
-    console.log(req.body);
+
+    if (!requestId) {
+      return res.status(400).json({ message: 'Request ID is required' });
+    }
+
     if (!['approved', 'rejected'].includes(status)) {
-        console.log("hitted");
-      return res.status(400).json({ message: 'Invalid status' });
+      return res.status(400).json({ message: 'Invalid status. Must be either "approved" or "rejected"' });
     }
 
     const creditRequest = await CreditRequest.findById(requestId);
@@ -68,26 +72,50 @@ export const processCreditRequest = async (req, res) => {
       return res.status(400).json({ message: 'Request already processed' });
     }
 
-    creditRequest.status = status;
-    creditRequest.processedBy = req.user._id;
-    creditRequest.processedDate = new Date();
-    await creditRequest.save();
+    // Start a session for transaction
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-    if (status === 'approved') {
-      const user = await User.findById(creditRequest.userId);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+    try {
+      // Update credit request status
+      creditRequest.status = status;
+      creditRequest.processedBy = req.user._id;
+      creditRequest.processedDate = new Date();
+      await creditRequest.save({ session });
+
+      if (status === 'approved') {
+        // Update user credits using findByIdAndUpdate
+        const updatedUser = await User.findByIdAndUpdate(
+          creditRequest.userId,
+          { $inc: { credits: creditRequest.requestedCredits } },
+          { new: true, session }
+        );
+
+        if (!updatedUser) {
+          throw new Error('User not found');
+        }
       }
 
-      user.credits += creditRequest.requestedCredits;
-      await user.save();
-    }
+      // Commit the transaction
+      await session.commitTransaction();
 
-    res.status(200).json({
-      message: `Credit request ${status}`,
-      requestId: creditRequest._id,
-    });
+      res.status(200).json({
+        message: `Credit request ${status} successfully`,
+        requestId: creditRequest._id,
+      });
+    } catch (error) {
+      // If an error occurred, abort the transaction
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      // End the session
+      session.endSession();
+    }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error processing credit request:', error);
+    res.status(500).json({ 
+      message: 'Error processing credit request',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
