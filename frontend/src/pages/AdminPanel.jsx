@@ -682,7 +682,7 @@ const AdminPanel = () => {
                             <button
                               className="flex items-center gap-2 bg-red-100 text-red-800 hover:bg-red-200 transition-all duration-200 px-4 py-1.5 rounded-full font-semibold shadow-sm"
                               onClick={() =>
-                                handleCreditAction(request._id, "reject")
+                                handleCreditAction(request._id, "rejected")
                               }
                             >
                               <XCircle size={16} />
