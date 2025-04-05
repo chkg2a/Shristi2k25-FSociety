@@ -5,7 +5,7 @@ import useAuthStore from "../store/authStore";
 const CTABanner = () => {
   const { isAuthenticated, user } = useAuthStore();
   return (
-    <section className="bg-blue-600 py-12 px-4 text-center">
+    <section id="contact" className="bg-blue-600 py-12 px-4 text-center">
       <div className="max-w-3xl mx-auto">
         <h2 className="text-3xl font-semibold text-white mb-4">
           Ready to Transform Your Document Management?

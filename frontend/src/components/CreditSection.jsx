@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaEthereum, FaRupeeSign, FaCoins } from "react-icons/fa";
 import { SiRazorpay } from "react-icons/si";
 
-const CreditsSection = ({ user }) => {
+const CreditsSection = ({ credits }) => {
   const [creditsToBuy, setCreditsToBuy] = useState(100);
 
   const handleRazorpayPayment = () => {
@@ -23,7 +23,7 @@ const CreditsSection = ({ user }) => {
           <h2 className="text-lg font-semibold text-gray-800">Your Credits</h2>
           <div className="flex items-center gap-2 text-green-600 text-xl font-bold">
             <FaCoins className="text-yellow-500" />
-            {user?.credits ?? 0}
+    {credits}
           </div>
         </div>
 

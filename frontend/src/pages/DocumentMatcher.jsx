@@ -263,7 +263,7 @@ const DocumentMatcher = () => {
 
         {/* Credits Sidebar */}
         <div>
-          <CreditSection user={user} />
+          <CreditSection credits={matchResults ? matchResults.remainingCredits : user.credits} />
         </div>
       </div>
     </>
