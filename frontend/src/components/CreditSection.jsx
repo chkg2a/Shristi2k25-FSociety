@@ -2,6 +2,8 @@ import { useState } from "react";
 import { FaEthereum, FaRupeeSign, FaCoins } from "react-icons/fa";
 import { SiRazorpay } from "react-icons/si";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const CreditsSection = ({ credits }) => {
   const [creditsToBuy, setCreditsToBuy] = useState(100);
@@ -9,29 +11,31 @@ const CreditsSection = ({ credits }) => {
   const [requestedCredits, setRequestedCredits] = useState('');
   const [reason, setReason] = useState('');
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
+
+  const navigate = useNavigate();
 
   const handleRazorpayPayment = () => {
     console.log(`Buying ${creditsToBuy} credits with Razorpay`);
+    toast.success(`Initiating purchase of ${creditsToBuy} credits via Razorpay`);
   };
 
   const handleCryptoPayment = () => {
-    console.log(`Buying ${creditsToBuy} credits with Crypto`);
+    navigate("/wallet");
   };
 
   const requestCredit = async () => {
     try {
       setLoading(true);
-      setMessage('');
       const res = await axios.post('http://localhost:3000/api/v1/credit/request', {
         requestedCredits,
         reason
       });
-      setMessage('✅ Request submitted successfully!');
-      console.log(res);
+      toast.success('✅ Request submitted successfully!');
+      setRequestedCredits('');
+      setReason('');
     } catch (error) {
       console.error(error);
-      setMessage('❌ Something went wrong while submitting the request.');
+      toast.error('❌ Something went wrong while submitting the request.');
     } finally {
       setLoading(false);
     }
@@ -40,7 +44,7 @@ const CreditsSection = ({ credits }) => {
   const handleRequestSubmit = (e) => {
     e.preventDefault();
     if (!requestedCredits || !reason) {
-      setMessage('⚠️ Please fill in all fields.');
+      toast.error('⚠️ Please fill in all fields.');
       return;
     }
     requestCredit();
@@ -122,9 +126,6 @@ const CreditsSection = ({ credits }) => {
             >
               {loading ? 'Submitting...' : 'Submit Request'}
             </button>
-            {message && (
-              <p className="text-sm text-center text-gray-700">{message}</p>
-            )}
           </form>
         )}
       </div>

@@ -1,4 +1,5 @@
 import "./App.css";
+import { Toaster } from "react-hot-toast";
 import { Navigate } from "react-router-dom";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoadingPage from "./pages/LoadingPage.jsx";
@@ -11,7 +12,7 @@ import { useEffect } from "react";
 import useAuthStore from "./store/authStore";
 import DocumentMatcher from "./pages/DocumentMatcher.jsx";
 import Error404Page from "./pages/Error404Page.jsx";
-
+import Payment from "./components/Payment.jsx";
 const ProtectedRoute = ({ children, role }) => {
   const { isAuthenticated, isCheckingAuth } = useAuthStore();
 
@@ -48,6 +49,7 @@ function App() {
 
   return (
     <>
+      <Toaster position="bottom-right" reverseOrder={false} />
       <BrowserRouter>
         <Routes>
           <Route path="*" element={<Error404Page />} />
@@ -71,6 +73,7 @@ function App() {
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/dashboard" element={<AdminPanel />} />
+          <Route path="/wallet" element={<Payment />} />
         </Routes>
       </BrowserRouter>
     </>
@@ -78,3 +81,4 @@ function App() {
 }
 
 export default App;
+
