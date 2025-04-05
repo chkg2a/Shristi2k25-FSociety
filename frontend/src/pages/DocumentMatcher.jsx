@@ -15,7 +15,7 @@ const DocumentMatcher = () => {
   const [matchResults, setMatchResults] = useState(null);
   const { getAnalytics, user } = useAuthStore();
   const [selectedDoc, setSelectedDoc] = useState(null);
-  
+
   // New state for document upload functionality
   const [uploadFile, setUploadFile] = useState(null);
   const [uploadLoading, setUploadLoading] = useState(false);
@@ -87,7 +87,7 @@ const DocumentMatcher = () => {
           withCredentials: true,
         },
       );
-      
+
       if (response.data) {
         toast.success("Document uploaded successfully");
         getUserDocuments(); // Refresh the document list
@@ -213,7 +213,9 @@ const DocumentMatcher = () => {
                 onClick={handleUpload}
                 disabled={uploadLoading || !uploadFile}
                 className={`bg-blue-500 text-white rounded-md px-4 py-2 flex items-center justify-center ${
-                  uploadLoading || !uploadFile ? "cursor-not-allowed opacity-50" : ""
+                  uploadLoading || !uploadFile
+                    ? "cursor-not-allowed opacity-50"
+                    : ""
                 }`}
               >
                 <Upload size={16} className="mr-2" />
@@ -231,10 +233,13 @@ const DocumentMatcher = () => {
                 {loading ? (
                   <p>Loading documents...</p>
                 ) : (
-                  <div className="rounded-lg ">
-                    <h4 className="font-medium mb-2">Document to Compare</h4>
+                  <div className="bg-white p-6 rounded-xl shadow-md">
+                    <h4 className="text-lg font-semibold text-gray-800 mb-3">
+                      Document to Compare
+                    </h4>
+
                     <select
-                      className="w-full rounded"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                       value={selectedDoc || ""}
                       onChange={(e) => handleDocSelect(e.target.value)}
                     >
@@ -245,9 +250,13 @@ const DocumentMatcher = () => {
                         </option>
                       ))}
                     </select>
-                    <p className="text-sm text-gray-500 mt-2">
-                      This document will be compared against all your other
-                      documents
+
+                    <p className="text-sm text-gray-500 mt-3">
+                      This document will be{" "}
+                      <span className="font-medium text-gray-700">
+                        compared
+                      </span>{" "}
+                      against all your other documents.
                     </p>
                   </div>
                 )}
@@ -331,7 +340,7 @@ const DocumentMatcher = () => {
         <div>
           <CreditSection
             credits={
-              matchResults ? matchResults.remainingCredits : user.credits 
+              matchResults ? matchResults.remainingCredits : user.credits
             }
           />
         </div>
@@ -341,3 +350,4 @@ const DocumentMatcher = () => {
 };
 
 export default DocumentMatcher;
+
