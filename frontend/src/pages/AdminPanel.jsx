@@ -670,7 +670,7 @@ const AdminPanel = () => {
                             <button
                               className="bg-red-100 text-red-800 px-3 py-1 rounded-full font-medium"
                               onClick={() =>
-                                handleCreditAction(request._id, "reject")
+                                handleCreditAction(request._id, "rejected")
                               }
                             >
                               Reject
