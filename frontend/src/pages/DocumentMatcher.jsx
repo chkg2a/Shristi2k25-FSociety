@@ -4,6 +4,7 @@ import axios from "axios";
 import Navbar from "../components/NavBar";
 import useAuthStore from "../store/authStore";
 import CreditSection from "../components/CreditSection";
+import { toast } from "react-toastify";
 
 const DocumentMatcher = () => {
   const [documents, setDocuments] = useState([]);
@@ -14,6 +15,10 @@ const DocumentMatcher = () => {
   const [matchResults, setMatchResults] = useState(null);
   const { getAnalytics, user } = useAuthStore();
   const [selectedDoc, setSelectedDoc] = useState(null);
+  
+  // New state for document upload functionality
+  const [uploadFile, setUploadFile] = useState(null);
+  const [uploadLoading, setUploadLoading] = useState(false);
 
   const getUserDocuments = async () => {
     try {
@@ -46,6 +51,52 @@ const DocumentMatcher = () => {
     } else {
       setSelectedFile(null);
       setError("Please select a valid .txt file");
+    }
+  };
+
+  // New handlers for document upload
+  const handleUploadFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile && selectedFile.type === "text/plain") {
+      setUploadFile(selectedFile);
+    } else {
+      toast.error("Please upload a .txt file");
+      e.target.value = null;
+    }
+  };
+
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    if (!uploadFile) {
+      toast.error("Please select a file");
+      return;
+    }
+
+    try {
+      setUploadLoading(true);
+      const formData = new FormData();
+      formData.append("file", uploadFile);
+
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/document/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        },
+      );
+      
+      if (response.data) {
+        toast.success("Document uploaded successfully");
+        getUserDocuments(); // Refresh the document list
+        setUploadFile(null); // Reset the file input
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error uploading document");
+    } finally {
+      setUploadLoading(false);
     }
   };
 
@@ -123,9 +174,9 @@ const DocumentMatcher = () => {
   return (
     <>
       <Navbar />
-      <div className="flex justify-center mx-auto bg-[#f9fafb] pt-8 gap-8">
+      <div className="flex h-screen justify-center mx-auto bg-[#f9fafb] pt-8 gap-8">
         <div className="w-full max-w-2xl">
-          {/* Upload Section */}
+          {/* Integrated Document Upload Section */}
           <div className="bg-white w-full rounded-lg shadow-md p-8 mb-6">
             <div className="flex flex-col items-center text-center">
               <div className="bg-blue-100 p-2 rounded-full mb-2">
@@ -133,35 +184,46 @@ const DocumentMatcher = () => {
               </div>
               <h2 className="text-lg font-medium mb-1">Upload Your Document</h2>
               <p className="text-sm text-gray-500 mb-4">
-                Upload a .txt file to compare with your other documents
+                Upload a .txt file to store in the database for later matching
               </p>
 
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 w-full mb-4">
                 <div className="flex flex-col items-center">
                   <FileText className="text-gray-400 mb-2" size={24} />
                   <p className="text-sm text-gray-500 mb-1">
-                    {selectedFile
-                      ? `Selected: ${selectedFile.name}`
-                      : "Select a file to upload"}
+                    Drag and drop your file here or
                   </p>
-                  <label className="text-blue-500 text-sm hover:underline cursor-pointer">
-                    Browse files
+                  <div className="w-[240px] flex items-center">
                     <input
                       type="file"
-                      className="hidden"
                       accept=".txt"
-                      onChange={handleFileSelect}
+                      onChange={handleUploadFileChange}
+                      className="block w-full text-sm text-gray-500
+                      file:mr-4 file:py-2 file:px-4
+                      file:rounded-full file:border-0
+                      file:text-sm file:font-semibold
+                      file:bg-blue-50 file:text-blue-700
+                      hover:file:bg-blue-100"
                     />
-                  </label>
+                  </div>
                 </div>
               </div>
 
-              {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+              <button
+                onClick={handleUpload}
+                disabled={uploadLoading || !uploadFile}
+                className={`bg-blue-500 text-white rounded-md px-4 py-2 flex items-center justify-center ${
+                  uploadLoading || !uploadFile ? "cursor-not-allowed opacity-50" : ""
+                }`}
+              >
+                <Upload size={16} className="mr-2" />
+                Upload File
+              </button>
             </div>
           </div>
 
           {/* Document Matching Section */}
-          {(matchResults === null || matchResults.remainingCredits > 0) ? (
+          {matchResults === null || matchResults.remainingCredits > 0 ? (
             <>
               <div className="bg-white w-full rounded-lg shadow-md p-6 mb-6">
                 <h3 className="font-medium mb-4">Select Document to Compare</h3>
@@ -169,10 +231,10 @@ const DocumentMatcher = () => {
                 {loading ? (
                   <p>Loading documents...</p>
                 ) : (
-                  <div className="border rounded-lg p-4">
+                  <div className="rounded-lg ">
                     <h4 className="font-medium mb-2">Document to Compare</h4>
                     <select
-                      className="w-full p-2 border rounded"
+                      className="w-full rounded"
                       value={selectedDoc || ""}
                       onChange={(e) => handleDocSelect(e.target.value)}
                     >
@@ -184,7 +246,8 @@ const DocumentMatcher = () => {
                       ))}
                     </select>
                     <p className="text-sm text-gray-500 mt-2">
-                      This document will be compared against all your other documents
+                      This document will be compared against all your other
+                      documents
                     </p>
                   </div>
                 )}
@@ -219,7 +282,9 @@ const DocumentMatcher = () => {
                       <div key={result.documentId} className="border-b pb-4">
                         <div className="flex justify-between items-center">
                           <div>
-                            <h4 className="font-medium">{result.originalName}</h4>
+                            <h4 className="font-medium">
+                              {result.originalName}
+                            </h4>
                             <p className="text-sm text-gray-500">
                               Document #{index + 1}
                             </p>
@@ -231,8 +296,8 @@ const DocumentMatcher = () => {
                                 result.score > 70
                                   ? "text-green-600"
                                   : result.score > 30
-                                  ? "text-yellow-600"
-                                  : "text-red-600"
+                                    ? "text-yellow-600"
+                                    : "text-red-600"
                               }`}
                             >
                               {result.score}%
@@ -256,14 +321,19 @@ const DocumentMatcher = () => {
             </>
           ) : (
             <div className="text-center text-red-600 mt-4 font-medium">
-              You have no remaining credits. Please upgrade your plan or contact support.
+              You have no remaining credits. Please upgrade your plan or contact
+              support.
             </div>
           )}
         </div>
 
         {/* Credits Sidebar */}
         <div>
-          <CreditSection credits={matchResults ? matchResults.remainingCredits : user.credits} />
+          <CreditSection
+            credits={
+              matchResults ? matchResults.remainingCredits : user.credits 
+            }
+          />
         </div>
       </div>
     </>

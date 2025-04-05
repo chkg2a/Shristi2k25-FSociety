@@ -18,7 +18,7 @@ const CTABanner = () => {
 
         <Link to="/sign-in">
           <button className="bg-white text-blue-600 font-medium px-8 py-3 rounded-md hover:bg-blue-50 transition-colors">
-            Start Free Trial
+            {isAuthenticated ? "Start Matching" : "Start Free Trial"}
           </button>
         </Link>
       </div>

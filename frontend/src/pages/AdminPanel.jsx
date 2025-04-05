@@ -19,21 +19,47 @@ import ReportsSection from "../components/ReportsSection";
 import useAuthStore from "../store/authStore.js";
 
 const AdminPanel = () => {
+  const [documents, setDocuments] = useState([]);
   const [activeTab, setActiveTab] = useState("dashboard");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [pendingRequests, setPendingRequests] = useState([]);
-  const { getAnalytics, user,fetchUser } = useAuthStore();
+  const { getAnalytics, user, fetchUser } = useAuthStore();
+
+  const getUserDocuments = async () => {
+    try {
+      setLoading(true);
+      await getAnalytics();
+      const res = await axios.get("http://localhost:3000/api/v1/document");
+      const formattedDocuments = res.data.documents.map((doc) => ({
+        id: doc._id,
+        name: doc.originalName,
+        uploadDate: new Date(doc.uploadDate).toLocaleDateString(),
+        user: doc.userId?.name || "Unknown",
+        fileType: doc.originalName.split(".").pop().toUpperCase(),
+        size: doc.size ? `${(doc.size / 1024).toFixed(1)} KB` : "N/A",
+      }));
+      setDocuments(formattedDocuments);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getUserDocuments();
+  }, []);
 
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const res = await getAnalytics(); // should return full analytics object
+        const res = await getAnalytics();
         const data = res?.data;
 
         if (data) {
           setStats({
-            documents: data.stats.totalScans, // or get count from another API
+            documents: data.stats.totalScans,
             users: data.stats.totalUsers,
             matchRate: Math.floor(
               (data.stats.todayScans / data.stats.totalScans) * 100 || 0,
@@ -205,7 +231,6 @@ const handleCreditAction = async (requestId, action) => {
         <main className="p-6">
           {activeTab === "dashboard" && (
             <>
-              {/* Stats Row */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
                 <div className="bg-white rounded-lg shadow p-4">
                   <div className="flex items-center">
@@ -258,34 +283,94 @@ const handleCreditAction = async (requestId, action) => {
 
               {user.role == "admin" && (
                 <>
-                  {/* Recent Activity */}
+                  {/* Recent Documents */}
                   <div className="bg-white rounded-lg shadow mb-6">
                     <div className="p-4 border-b border-gray-200">
-                      <h2 className="text-lg font-semibold">Recent Activity</h2>
+                      <h2 className="text-lg font-semibold">
+                        Recent Documents
+                      </h2>
                     </div>
-                    <div className="divide-y divide-gray-200">
-                      {recentActivity.map((activity) => (
-                        <div
-                          key={activity.id}
-                          className="p-4 flex items-center"
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Document
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              User
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Type
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Upload Date
+                            </th>
+                          </tr>
+                        </thead>
+                        {loading ? (
+                          <tbody className="bg-white divide-y divide-gray-200 animate-pulse">
+                            {[...Array(5)].map((_, idx) => (
+                              <tr key={idx}>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="flex items-center">
+                                    <div className="h-5 w-5 bg-gray-300 rounded mr-2"></div>
+                                    <div className="h-4 w-32 bg-gray-300 rounded"></div>
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="h-4 w-24 bg-gray-300 rounded"></div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <span className="h-5 w-16 bg-gray-300 rounded-full inline-block"></span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="h-4 w-20 bg-gray-300 rounded"></div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        ) : (
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {documents.slice(0, 5).map((doc) => (
+                              <tr key={doc.id}>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="flex items-center">
+                                    <File className="flex-shrink-0 h-5 w-5 text-gray-400 mr-2" />
+                                    <div className="text-sm font-medium text-gray-900 truncate max-w-xs">
+                                      {doc.name}
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="text-sm text-gray-900">
+                                    {doc.user}
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                    {doc.fileType}
+                                  </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  {doc.uploadDate}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        )}
+                      </table>
+                    </div>
+                    {documents.length > 5 && (
+                      <div className="p-4 border-t border-gray-200 text-right">
+                        <button
+                          onClick={() => setActiveTab("reports")}
+                          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                         >
-                          <img
-                            src={activity.avatar}
-                            alt={activity.user}
-                            className="w-10 h-10 rounded-full mr-4"
-                          />
-                          <div className="flex-1">
-                            <h3 className="font-semibold">{activity.user}</h3>
-                            <p className="text-sm text-gray-600">
-                              {activity.action}
-                            </p>
-                          </div>
-                          <span className="text-sm text-gray-500">
-                            {activity.time}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                          View all documents →
+                        </button>
+                      </div>
+                    )}
                   </div>
                   {/* Top Users */}
                   <div className="bg-white rounded-lg shadow">
@@ -322,48 +407,74 @@ const handleCreditAction = async (requestId, action) => {
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                          {topUsers.map((user) => (
-                            <tr key={user.id}>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="flex items-center">
-                                  <div className="flex-shrink-0 h-10 w-10">
-                                    <img
-                                      className="h-10 w-10 rounded-full"
-                                      src={user.avatar}
-                                      alt=""
-                                    />
-                                  </div>
-                                  <div className="ml-4">
-                                    <div className="text-sm font-medium text-gray-900">
-                                      {user.user}
-                                    </div>
-                                    <div className="text-sm text-gray-500">
-                                      {user.email}
+                        {loading ? (
+                          <tbody className="bg-white divide-y divide-gray-200 animate-pulse">
+                            {[...Array(5)].map((_, idx) => (
+                              <tr key={idx}>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="flex items-center">
+                                    <div className="flex-shrink-0 h-10 w-10 bg-gray-300 rounded-full"></div>
+                                    <div className="ml-4">
+                                      <div className="h-4 w-32 bg-gray-300 rounded mb-1"></div>
+                                      <div className="h-3 w-24 bg-gray-200 rounded"></div>
                                     </div>
                                   </div>
-                                </div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {user.documents}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {user.matches}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm text-gray-900">
-                                  {user.successRate}%
-                                </div>
-                                <div className="w-full bg-gray-200 rounded-full h-2">
-                                  <div
-                                    className="bg-green-500 h-2 rounded-full"
-                                    style={{ width: `${user.successRate}%` }}
-                                  ></div>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  <div className="h-4 w-12 bg-gray-300 rounded"></div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  <div className="h-4 w-12 bg-gray-300 rounded"></div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="h-4 w-16 bg-gray-300 rounded mb-1"></div>
+                                  <div className="w-full bg-gray-200 rounded-full h-2">
+                                    <div className="bg-gray-300 h-2 rounded-full w-2/3"></div>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        ) : (
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {topUsers.map((user) => (
+                              <tr key={user.id}>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="flex items-center">
+                                    <div className="flex-shrink-0 h-10 w-10">
+                                      {getInitials(user.user)}
+                                    </div>
+                                    <div className="ml-4">
+                                      <div className="text-sm font-medium text-gray-900">
+                                        {user.user}
+                                      </div>
+                                      <div className="text-sm text-gray-500">
+                                        {user.email}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  {user.documents}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  {user.matches}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="text-sm text-gray-900">
+                                    {user.successRate}%
+                                  </div>
+                                  <div className="w-full bg-gray-200 rounded-full h-2">
+                                    <div
+                                      className="bg-green-500 h-2 rounded-full"
+                                      style={{ width: `${user.successRate}%` }}
+                                    ></div>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        )}
                       </table>
                     </div>
                   </div>
@@ -421,34 +532,12 @@ const handleCreditAction = async (requestId, action) => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {[
-                      ...topUsers,
-                      {
-                        id: 3,
-                        user: "Alex Johnson",
-                        email: "alex@example.com",
-                        avatar: "/api/placeholder/40/40",
-                        role: "Admin",
-                        status: "Active",
-                      },
-                      {
-                        id: 4,
-                        user: "Jessica Parker",
-                        email: "jessica@example.com",
-                        avatar: "/api/placeholder/40/40",
-                        role: "User",
-                        status: "Inactive",
-                      },
-                    ].map((user) => (
+                    {[...topUsers].map((user) => (
                       <tr key={user.id}>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10">
-                              <img
-                                className="h-10 w-10 rounded-full"
-                                src={user.avatar}
-                                alt=""
-                              />
+                            <div className="flex-shrink-0 h-10 w-10  flex items-center justify-center">
+                              {getInitials(user.email)}
                             </div>
                             <div className="ml-4">
                               <div className="text-sm font-medium text-gray-900">
@@ -574,7 +663,9 @@ const handleCreditAction = async (requestId, action) => {
                         <tr key={request._id}>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
-                              <div className="flex-shrink-0 h-10 w-10">{getInitials(request.userId?.name)}</div>
+                              <div className="flex-shrink-0 h-10 w-10">
+                                {getInitials(request.userId?.name)}
+                              </div>
                               <div className="ml-4">
                                 <div className="text-sm font-medium text-gray-900">
                                   {request.userId?.name || "User"}
@@ -746,4 +837,3 @@ const handleCreditAction = async (requestId, action) => {
 };
 
 export default AdminPanel;
-

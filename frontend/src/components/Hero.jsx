@@ -20,13 +20,7 @@ const DocumentScanningHero = () => {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link to={`${isAuthenticated ? "/document-matching" : "/sign-up"}`}>
               <button className="bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 transition-colors">
-                Start Free Trial
-              </button>
-            </Link>
-            <Link to={`${isAuthenticated ? "/document-matching" : "/sign-up"}`}>
-              <button className="bg-transparent text-gray-800 px-6 py-3 rounded-md font-medium hover:bg-gray-200 transition-colors flex items-center">
-                Start Matching
-                <ArrowRight className="ml-2 h-4 w-4" />
+                {isAuthenticated ? "Start Matching" : "Start Free Trial"}
               </button>
             </Link>
           </div>
