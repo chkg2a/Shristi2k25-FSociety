@@ -99,7 +99,7 @@ const DocumentMatcher = () => {
       setMatching(true);
       setError(null);
 
-      const res = await axios.post("http://localhost:3000/api/v1/document/match", {
+      const res = await axios.post("http://localhost:3000/api/v1/match", {
         sourceDocumentId: doc1Id,
         targetDocumentId: doc2Id,
       });

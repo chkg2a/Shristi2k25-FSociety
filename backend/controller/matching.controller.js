@@ -40,7 +40,7 @@ export const matchDocuments = async (req, res) => {
       const targetDocs = await Document.find({ _id: { $in: targetDocumentId } });
 
       
-      console.log(targetDocs);
+      
 
       const results = await matchWithCosine(sourceDoc, targetDocs);
   
