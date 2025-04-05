@@ -1,5 +1,5 @@
 import express from "express";
-import { getUserById } from "../controllers/user.controller.js"; // adjust path if needed
+import { getUserById } from "../controller/user.controller.js";
 
 const userRoute = express.Router();
 

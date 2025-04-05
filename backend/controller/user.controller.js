@@ -1,4 +1,4 @@
-import User from "../models/user.model.js"; // adjust the path if different
+import User from "../model/user.model.js"; // adjust the path if different
 
 // Controller to get user by ID
 export const getUserById = async (req, res) => {

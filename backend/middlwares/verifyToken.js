@@ -15,12 +15,14 @@ export const verifyToken = async (req, res, next) => {
   
 
     if (!decoded.userId) {
+      console.log("hit1")
       return res.status(401).json({ message: "Unauthorized: Invalid token payload" });
     }
 
     const user = await User.findById(decoded.userId);
 
     if (!user) {
+      console.log("hit2")
       return res.status(401).json({ message: "Unauthorized: User not found" });
     }
     const currentDate = new Date();
