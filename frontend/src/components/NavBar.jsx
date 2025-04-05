@@ -46,7 +46,7 @@ const Navbar = () => {
             <circle cx="12" cy="12" r="10" strokeWidth="2" />
             <path strokeLinecap="round" strokeWidth="2" d="M12 8v4m0 4h.01" />
           </svg>
-          DocScan
+          Docs Scan
         </a>
 
         {/* Desktop Nav */}
