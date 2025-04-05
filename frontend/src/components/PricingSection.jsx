@@ -3,7 +3,7 @@ import useAuthStore from "../store/authStore";
 import { Link } from "react-router-dom";
 
 const PricingSection = () => {
-  const { user } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
 
   return (
     <section className="py-16 px-4 bg-gray-50">
@@ -17,8 +17,7 @@ const PricingSection = () => {
           <div className="bg-white rounded-lg shadow-md p-6 flex flex-col">
             <h3 className="text-lg font-medium mb-4">Basic</h3>
             <div className="mb-6">
-              <span className="text-3xl font-bold">$9</span>
-              <span className="text-gray-500 text-sm">/month</span>
+              <span className="text-3xl font-bold">Free</span>
             </div>
 
             <div className="flex-grow space-y-3 mb-6">
@@ -36,7 +35,7 @@ const PricingSection = () => {
                     d="M5 13l4 4L19 7"
                   ></path>
                 </svg>
-                <span className="text-gray-700">100 Scans/month</span>
+                <span className="text-gray-700">20 scans/month</span>
               </div>
               <div className="flex items-center">
                 <svg
@@ -68,11 +67,11 @@ const PricingSection = () => {
                     d="M5 13l4 4L19 7"
                   ></path>
                 </svg>
-                <span className="text-gray-700">5GB Storage</span>
+                <span className="text-gray-700">2GB Storage</span>
               </div>
             </div>
 
-            <Link to={`${user ? "/buy" : "/sign-up"}`}>
+            <Link to={`${isAuthenticated ? "/document-sharing" : "/sign-up"}`}>
               <button className="text-gray-600 py-2 px-4 rounded-md border border-gray-300 hover:bg-gray-50 text-center mt-auto">
                 Choose Basic
               </button>
@@ -83,7 +82,7 @@ const PricingSection = () => {
           <div className="bg-white rounded-lg shadow-md p-6 flex flex-col border-2 border-blue-500">
             <h3 className="text-lg font-medium mb-4">Pro</h3>
             <div className="mb-6">
-              <span className="text-3xl font-bold">$29</span>
+              <span className="text-3xl font-bold">$5</span>
               <span className="text-gray-500 text-sm">/month</span>
             </div>
 
@@ -102,7 +101,7 @@ const PricingSection = () => {
                     d="M5 13l4 4L19 7"
                   ></path>
                 </svg>
-                <span className="text-gray-700">500 Scans/month</span>
+                <span className="text-gray-700">500 scans/month</span>
               </div>
               <div className="flex items-center">
                 <svg
@@ -154,7 +153,7 @@ const PricingSection = () => {
               </div>
             </div>
 
-            <Link to={`${user ? "/buy" : "/sign-up"}`}>
+            <Link to={`${isAuthenticated ? "/buy" : "/sign-up"}`}>
               <button className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 text-center mt-auto">
                 Choose Pro
               </button>
@@ -252,7 +251,7 @@ const PricingSection = () => {
               </div>
             </div>
 
-            <Link to={`${user ? "/buy" : "/sign-up"}`}>
+            <Link to={`${isAuthenticated ? "/buy" : "/sign-up"}`}>
               <button className="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 text-center mt-auto">
                 Contact Sales
               </button>

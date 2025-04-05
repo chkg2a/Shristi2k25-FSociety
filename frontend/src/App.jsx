@@ -1,17 +1,17 @@
-import './App.css'
+import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import SignUp from './pages/SignUp';
-import SignIn from './pages/SignIn.jsx';
+import SignUp from "./pages/SignUp";
+import SignIn from "./pages/SignIn.jsx";
 import Home from "./pages/Home.jsx";
-import DocumentScanner from './pages/DocumentScanner.jsx';
-import { useEffect } from 'react';
-import useAuthStore from './store/authStore';
+import DocumentScanner from "./pages/DocumentScanner.jsx";
+import { useEffect } from "react";
+import useAuthStore from "./store/authStore";
 
 function App() {
-  const {check}=useAuthStore();
-  useEffect(()=>{
+  const { check } = useAuthStore();
+  useEffect(() => {
     check();
-  },[check]);
+  }, [check]);
 
   return (
     <>
@@ -24,7 +24,7 @@ function App() {
         </Routes>
       </BrowserRouter>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
