@@ -39,7 +39,28 @@ const useAuthStore=create((set)=>({
         } catch (error) {
             console.error("Error checking auth:", error);
         }
-    }
+    },
+    upload: async (file, documentName) => {
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('name', documentName);
+          
+          const res = await axios.post("http://localhost:3000/api/v1/document/upload", 
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+          );
+          
+          return res.data;
+        } catch (error) {
+          console.error("Error uploading document:", error);
+          throw error;
+        }
+      },
 }));
 
 export default useAuthStore;

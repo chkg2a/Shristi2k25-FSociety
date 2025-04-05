@@ -17,7 +17,7 @@ const SignIn = () => {
             const res=await login(email,password);
             console.log(res);
             if(res.data?.success){
-                navigate("/home");
+                navigate("/upload-document");
             } else if(res.response?.data?.message) {
                 setError(res.response.data.message);
             }
