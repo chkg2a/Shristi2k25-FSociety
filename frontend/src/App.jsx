@@ -1,11 +1,12 @@
-import { useState } from 'react'
 import './App.css'
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from './components/Login';
-import SignUp from './components/SignUp';
-import Home from './components/Home';
+import SignUp from './pages/SignUp';
+import SignIn from './pages/SignIn.jsx';
+import Home from "./pages/Home.jsx";
+import DocumentScanner from './pages/DocumentScanner.jsx';
 import { useEffect } from 'react';
 import useAuthStore from './store/authStore';
+
 function App() {
   const {check}=useAuthStore();
   useEffect(()=>{
@@ -16,9 +17,10 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/home" element={<Home />} /> 
+          <Route path="/" element={<Home />} />
+          <Route path="/document-matching" element={<DocumentScanner />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/sign-in" element={<SignIn />} />
         </Routes>
       </BrowserRouter>
     </>
