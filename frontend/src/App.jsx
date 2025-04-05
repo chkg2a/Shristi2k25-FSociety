@@ -7,6 +7,7 @@ import DocumentUpload from './components/DocumentUpload.jsx';
 import ProfilePage from "./pages/ProfilePage.jsx"
 import AdminPanel from "./pages/AdminPanel.jsx"
 import DocumentScanner from "./pages/DocumentScanner.jsx";
+import RequestCredit from "./pages/RequestCredict.jsx";
 import { useEffect } from "react";
 import useAuthStore from "./store/authStore";
 
@@ -25,7 +26,10 @@ function App() {
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/upload-document" element={<DocumentUpload />} />
+          <Route path="/request-credits" element={<RequestCredit />} />
           <Route path="/profile" element={<AdminPanel />} />
+          
+          <Route path="/request-credits" element={<RequestCredit />} />
         </Routes>
       </BrowserRouter>
     </>

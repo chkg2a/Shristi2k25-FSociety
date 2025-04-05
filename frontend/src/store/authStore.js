@@ -35,6 +35,7 @@ const useAuthStore=create((set)=>({
     check:async()=>{
         try {
             const res=await axios.post("http://localhost:3000/api/v1/verify/check");
+            console.log(res);
             set({user:res.data.user,isAuthenticated:true});
         } catch (error) {
             console.error("Error checking auth:", error);
@@ -61,6 +62,26 @@ const useAuthStore=create((set)=>({
           throw error;
         }
       },
+      requestCredict:async(requestedCredits,reason)=>{
+            try {
+                const res=await axios.post("http://localhost:3000/api/v1/credit/request",{
+                    requestedCredits,
+                    reason
+                });
+                console.log(res);
+            } catch (error) {
+                console.log(error);
+            }
+      },
+      getAllPendingRequests: async () => {
+            try {
+                const res=await axios.get("http://localhost:3000/api/v1/credit/admin/pending");
+                console.log(res);
+            } catch (error) {
+                console.log(error);
+                return error;
+            }
+      }
 }));
 
 export default useAuthStore;

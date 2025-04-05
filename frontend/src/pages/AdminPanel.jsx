@@ -10,7 +10,8 @@ import {
   ChevronRight,
   Search,
   Bell,
-  User
+  User,
+  CreditCard
 } from "lucide-react";
 import axios from "axios";
 import ReportsSection from "../components/ReportsSection";
@@ -19,6 +20,7 @@ const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
+  const [pendingRequests, setPendingRequests] = useState([]);
   
   // Mock data - in a real app, this would come from API calls
   const stats = {
@@ -78,9 +80,45 @@ const AdminPanel = () => {
     { id: "dashboard", label: "Dashboard", icon: BarChart },
     { id: "upload", label: "Upload Document", icon: Upload },
     { id: "users", label: "Manage Users", icon: Users },
+    { id: "credits", label: "Credit Requests", icon: CreditCard },
     { id: "reports", label: "View Reports", icon: BarChart },
     { id: "settings", label: "Settings", icon: Settings }
   ];
+
+  // Function to get all pending credit requests
+  const getAllPendingRequests = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get("http://localhost:3000/api/v1/credit/admin/pending");
+      console.log(res);
+      if (res.data && res.data.data) {
+        setPendingRequests(res.data.data);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch pending requests when the credit tab is active
+  useEffect(() => {
+    if (activeTab === "credits") {
+      getAllPendingRequests();
+    }
+  }, [activeTab]);
+
+  // Function to handle approval/rejection of credit requests
+  const handleCreditAction = async (requestId, action) => {
+    try {
+      // Implement the API call for approval/rejection
+      await axios.put(`http://localhost:3000/api/v1/credit/admin/${action}/${requestId}`);
+      // Refresh the list
+      getAllPendingRequests();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -402,6 +440,95 @@ const AdminPanel = () => {
                     Next
                   </button>
                 </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Credit Requests Tab */}
+          {activeTab === "credits" && (
+            <div className="bg-white rounded-lg shadow">
+              <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 className="text-lg font-semibold">Pending Credit Requests</h2>
+                <button 
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  onClick={getAllPendingRequests}
+                >
+                  Refresh
+                </button>
+              </div>
+              <div className="p-4">
+                {loading ? (
+                  <div className="text-center py-8">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <p className="mt-2 text-gray-500">Loading requests...</p>
+                  </div>
+                ) : pendingRequests.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No pending credit requests found.</p>
+                  </div>
+                ) : (
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          User
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Request Date
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Amount
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Description
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {pendingRequests.map((request) => (
+                        <tr key={request._id}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <div className="flex-shrink-0 h-10 w-10">
+                                <img className="h-10 w-10 rounded-full" src="/api/placeholder/40/40" alt="" />
+                              </div>
+                              <div className="ml-4">
+                                <div className="text-sm font-medium text-gray-900">{request.userId?.name || "User"}</div>
+                                <div className="text-sm text-gray-500">{request.userId?.email || "No email"}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {new Date(request.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            ${request.amount}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {request.description || "No description"}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <button 
+                              className="bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium mr-2"
+                              onClick={() => handleCreditAction(request._id, "approve")}
+                            >
+                              Approve
+                            </button>
+                            <button 
+                              className="bg-red-100 text-red-800 px-3 py-1 rounded-full font-medium"
+                              onClick={() => handleCreditAction(request._id, "reject")}
+                            >
+                              Reject
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
           )}
