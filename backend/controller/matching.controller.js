@@ -1,14 +1,14 @@
 import Document from "../model/document.model.js";
 import User from "../model/user.model.js";
 import UsageLog from "../model/UsageLog.model.js";
-import { matchDocuments as matchWithCosine  } from "../service/matchingService";
+import { matchDocuments as matchWithCosine  } from "../service/matchingService.js";
 
 
 export const matchDocuments = async (req, res) => {
     try {
-      const { sourceDocumentId, targetDocumentIds } = req.body;
-  
-      if (!sourceDocumentId || !targetDocumentIds || !Array.isArray(targetDocumentIds)) {
+      const { sourceDocumentId, targetDocumentId } = req.body;
+        
+      if (!sourceDocumentId || !targetDocumentId ) {
         return res.status(400).json({ message: 'Invalid request parameters' });
       }
   
@@ -32,13 +32,16 @@ export const matchDocuments = async (req, res) => {
   
       
       const sourceDoc = await Document.findById(sourceDocumentId);
+      
       if (!sourceDoc) {
         return res.status(404).json({ message: 'Source document not found' });
       }
-  
-      const targetDocs = await Document.find({ _id: { $in: targetDocumentIds } });
-  
       
+      const targetDocs = await Document.find({ _id: { $in: targetDocumentId } });
+
+      
+      console.log(targetDocs);
+
       const results = await matchWithCosine(sourceDoc, targetDocs);
   
       res.status(200).json({
