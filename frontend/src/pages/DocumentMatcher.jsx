@@ -3,6 +3,7 @@ import { Cloud, FileText, Upload, Scale } from "lucide-react";
 import axios from "axios";
 import Navbar from "../components/NavBar";
 import useAuthStore from "../store/authStore";
+import CreditSection from "../components/CreditSection";
 
 const DocumentMatcher = () => {
   const [documents, setDocuments] = useState([]);
@@ -11,7 +12,7 @@ const DocumentMatcher = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [matching, setMatching] = useState(false);
   const [matchResults, setMatchResults] = useState(null);
-  const { getAnalytics } = useAuthStore();
+  const { getAnalytics, user } = useAuthStore();
   const [selectedDoc, setSelectedDoc] = useState(null);
 
   const getUserDocuments = async () => {
@@ -122,8 +123,8 @@ const DocumentMatcher = () => {
   return (
     <>
       <Navbar />
-      <div className="flex flex-col items-center mx-auto bg-[#f9fafb] pt-8">
-        <div className="w-full max-w-4xl">
+      <div className="flex justify-center mx-auto bg-[#f9fafb] pt-8 gap-8">
+        <div className="w-full max-w-2xl">
           {/* Upload Section */}
           <div className="bg-white w-full rounded-lg shadow-md p-8 mb-6">
             <div className="flex flex-col items-center text-center">
@@ -159,90 +160,110 @@ const DocumentMatcher = () => {
             </div>
           </div>
 
-          {/* Document Selection Section */}
-          <div className="bg-white w-full rounded-lg shadow-md p-6 mb-6">
-            <h3 className="font-medium mb-4">Select Document to Compare</h3>
+          {/* Document Matching Section */}
+          {(matchResults === null || matchResults.remainingCredits > 0) ? (
+            <>
+              <div className="bg-white w-full rounded-lg shadow-md p-6 mb-6">
+                <h3 className="font-medium mb-4">Select Document to Compare</h3>
 
-            {loading ? (
-              <p>Loading documents...</p>
-            ) : (
-              <div className="border rounded-lg p-4">
-                <h4 className="font-medium mb-2">Document to Compare</h4>
-                <select
-                  className="w-full p-2 border rounded"
-                  value={selectedDoc || ""}
-                  onChange={(e) => handleDocSelect(e.target.value)}
-                >
-                  <option value="">Select a document</option>
-                  {documents.map((doc) => (
-                    <option key={doc.id} value={doc.id}>
-                      {doc.name} ({doc.uploadDate})
-                    </option>
-                  ))}
-                </select>
-                <p className="text-sm text-gray-500 mt-2">
-                  This document will be compared against all your other documents
-                </p>
-              </div>
-            )}
-
-            <div className="mt-6 flex justify-center">
-              <button
-                className={`${
-                  matching ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
-                } text-white rounded-md px-4 py-2 flex items-center justify-center`}
-                onClick={handleStartMatching}
-                disabled={matching || (!selectedDoc && !selectedFile)}
-              >
-                {matching ? (
-                  "Comparing..."
+                {loading ? (
+                  <p>Loading documents...</p>
                 ) : (
-                  <>
-                    <Scale size={16} className="mr-2" />
-                    Compare Documents
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* Results Section */}
-          {matchResults && (
-            <div className="bg-white w-full rounded-lg shadow-md p-6">
-              <h3 className="font-medium mb-6">Comparison Results</h3>
-
-              <div className="space-y-4">
-                {matchResults.results.map((result, index) => (
-                  <div key={result.documentId} className="border-b pb-4">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <h4 className="font-medium">{result.originalName}</h4>
-                        <p className="text-sm text-gray-500">Document #{index + 1}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm text-gray-500">Similarity</p>
-                        <p className={`text-xl font-bold ${
-                          result.score > 70 ? 'text-green-600' : 
-                          result.score > 30 ? 'text-yellow-600' : 'text-red-600'
-                        }`}>
-                          {result.score}%
-                        </p>
-                      </div>
-                    </div>
+                  <div className="border rounded-lg p-4">
+                    <h4 className="font-medium mb-2">Document to Compare</h4>
+                    <select
+                      className="w-full p-2 border rounded"
+                      value={selectedDoc || ""}
+                      onChange={(e) => handleDocSelect(e.target.value)}
+                    >
+                      <option value="">Select a document</option>
+                      {documents.map((doc) => (
+                        <option key={doc.id} value={doc.id}>
+                          {doc.name} ({doc.uploadDate})
+                        </option>
+                      ))}
+                    </select>
+                    <p className="text-sm text-gray-500 mt-2">
+                      This document will be compared against all your other documents
+                    </p>
                   </div>
-                ))}
+                )}
+
+                <div className="mt-6 flex justify-center">
+                  <button
+                    className={`${
+                      matching ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+                    } text-white rounded-md px-4 py-2 flex items-center justify-center`}
+                    onClick={handleStartMatching}
+                    disabled={matching || (!selectedDoc && !selectedFile)}
+                  >
+                    {matching ? (
+                      "Comparing..."
+                    ) : (
+                      <>
+                        <Scale size={16} className="mr-2" />
+                        Compare Documents
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
 
-              <div className="mt-6 text-center">
-                <p className="text-sm text-gray-500">
-                  Compared against {matchResults.results.length} documents
-                </p>
-                <p className="text-sm text-gray-500 mt-2">
-                  Remaining credits: {matchResults.remainingCredits}
-                </p>
-              </div>
+              {/* Results Section */}
+              {matchResults && (
+                <div className="bg-white w-full rounded-lg shadow-md p-6">
+                  <h3 className="font-medium mb-6">Comparison Results</h3>
+
+                  <div className="space-y-4">
+                    {matchResults.results.map((result, index) => (
+                      <div key={result.documentId} className="border-b pb-4">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <h4 className="font-medium">{result.originalName}</h4>
+                            <p className="text-sm text-gray-500">
+                              Document #{index + 1}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-gray-500">Similarity</p>
+                            <p
+                              className={`text-xl font-bold ${
+                                result.score > 70
+                                  ? "text-green-600"
+                                  : result.score > 30
+                                  ? "text-yellow-600"
+                                  : "text-red-600"
+                              }`}
+                            >
+                              {result.score}%
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-6 text-center">
+                    <p className="text-sm text-gray-500">
+                      Compared against {matchResults.results.length} documents
+                    </p>
+                    <p className="text-sm text-gray-500 mt-2">
+                      Remaining credits: {matchResults.remainingCredits}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-center text-red-600 mt-4 font-medium">
+              You have no remaining credits. Please upgrade your plan or contact support.
             </div>
           )}
+        </div>
+
+        {/* Credits Sidebar */}
+        <div>
+          <CreditSection user={user} />
         </div>
       </div>
     </>
