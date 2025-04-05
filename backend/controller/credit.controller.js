@@ -55,7 +55,7 @@ export const processCreditRequest = async (req, res) => {
     const { requestId, status } = req.body;
     console.log(req.body);
     if (!['approved', 'rejected'].includes(status)) {
-        
+        console.log("hitted");
       return res.status(400).json({ message: 'Invalid status' });
     }
 
