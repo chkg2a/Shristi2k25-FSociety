@@ -76,6 +76,7 @@ const AdminPanel = () => {
 
     if (activeTab === "dashboard") {
       fetchAnalytics();
+      console.log(topUsers);
     }
   }, [activeTab]);
 
@@ -136,7 +137,6 @@ const AdminPanel = () => {
       const res = await axios.get(
         "http://localhost:3000/api/v1/credit/admin/pending",
       );
-      console.log(res);
       if (res.data) {
         setPendingRequests(res.data.requests);
       }
@@ -147,34 +147,30 @@ const AdminPanel = () => {
     }
   };
 
-  
   useEffect(() => {
     if (activeTab === "credits") {
       getAllPendingRequests();
     }
   }, [activeTab]);
 
-  
-const handleCreditAction = async (requestId, action) => {
-  try {
-   
-    await axios.post("http://localhost:3000/api/v1/credit/admin/process", {
-      requestId,
-      status: action 
-    });
-    
-    getAllPendingRequests();
-  } catch (error) {
-    console.log(error);
-  }
-};
+  const handleCreditAction = async (requestId, action) => {
+    try {
+      await axios.post("http://localhost:3000/api/v1/credit/admin/process", {
+        requestId,
+        status: action,
+      });
+
+      getAllPendingRequests();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const getInitials = (fullName) => {
     if (!fullName) return "";
     const nameParts = fullName.trim().split(" ");
     return nameParts.map((part) => part[0]?.toUpperCase() || "").join("");
   };
-  console.log(user);
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -391,19 +387,13 @@ const handleCreditAction = async (requestId, action) => {
                               scope="col"
                               className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                             >
-                              Documents
+                              Credits
                             </th>
                             <th
                               scope="col"
                               className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                             >
-                              Matches
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            >
-                              Success Rate
+                              Total Scans
                             </th>
                           </tr>
                         </thead>
@@ -425,12 +415,6 @@ const handleCreditAction = async (requestId, action) => {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                   <div className="h-4 w-12 bg-gray-300 rounded"></div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="h-4 w-16 bg-gray-300 rounded mb-1"></div>
-                                  <div className="w-full bg-gray-200 rounded-full h-2">
-                                    <div className="bg-gray-300 h-2 rounded-full w-2/3"></div>
-                                  </div>
                                 </td>
                               </tr>
                             ))}
@@ -455,21 +439,10 @@ const handleCreditAction = async (requestId, action) => {
                                   </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                  {user.documents}
+                                  {user.credits}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                  {user.matches}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="text-sm text-gray-900">
-                                    {user.successRate}%
-                                  </div>
-                                  <div className="w-full bg-gray-200 rounded-full h-2">
-                                    <div
-                                      className="bg-green-500 h-2 rounded-full"
-                                      style={{ width: `${user.successRate}%` }}
-                                    ></div>
-                                  </div>
+                                  {user.totalScans}
                                 </td>
                               </tr>
                             ))}
